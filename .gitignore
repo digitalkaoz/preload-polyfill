@@ -1,0 +1,7 @@
+/node_modules
+/package-lock.json
+
+/dist
+
+# https://github.com/GoogleChromeLabs/simplehttp2server
+*.pem
