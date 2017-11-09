@@ -1,5 +1,5 @@
 {
-  "name": "preload-polyfill",
+  "name": "@digitalkaoz/preload-polyfill",
   "version": "1.0.0",
   "description": "",
   "main": "dist/polyfill.js",
