@@ -2,24 +2,53 @@
 <html>
     <head>
         <script>
+            var LOADED_ITEMS = [];
+            var logElement = function(el) {
+                console.log('loaded ' + el.href);
+            }
+
+            var trackLoad = function(el) {
+                LOADED_ITEMS.push(el.href);
+            }
+
             var loaded = function loaded(el) {
-                return console.log('loaded ' + el.href);
+                logElement(el);
+                trackLoad(el);
             };
             
+            var revealJs = function revealCss(el) {
+                return;
+                var script = document.createElement("script");
+                script.defer = true;
+                script.src = el.href;
+                script.async = false;
+            
+                el.parentNode.insertBefore(script, el);
+            }
+            
             var revealCss = function revealCss(el) {
+                return;
                 el.onload = null;
                 el.rel = 'stylesheet';
             };
         </script>
+        
         <script src="/dist/polyfill.js"></script>
     </head>
     
     <body>
-        <link rel="preload" as="style" href="foo.css" onload="loaded(this); revealCss(this)"/>
-        <link rel="preload" as="script" href="foo.js" onload="loaded(this)" />
-        <link rel="preload" as="script" href="foo.js" onload="loaded(this)" />
-        <link rel="preload" as="script" href="bar.js" onload="loaded(this)" />
+        <link rel="preload" as="script" type="module" href="module.js" onload="loaded(this);revealJs(this)" />
+        <link rel="preload" as="script" nomodule href="nomodule.js" onload="loaded(this);revealJs(this)" />
+
+        <link rel="preload" as="script" href="foo.js" onload="loaded(this);revealJs(this)" />
+        <link rel="preload" as="script" href="foo.js" onload="loaded(this);revealJs(this)" />
+        <link rel="preload" as="script" href="bar.js" onload="loaded(this);revealJs(this)" />
         <img src="img_fjords.jpg"/>
+
+        <link href="https://fonts.gstatic.com/s/raleway/v12/QAUlVt1jXOgQavlW5wEfxQLUuEpTyoUstqEm5AMlJo4.woff2" crossorigin="" rel="preload" as="font" type="font/woff2" onload="loaded(this);">
+        <link rel="preload" as="style" href="foo.css" onload="loaded(this); revealCss(this)"/>
+
+        <h1>webfont</h1>
         
         <script src="/dist/invoke.js"></script>
         <!-- TODO resources are loaded twice once injecting them into the parent document ?WTF -->

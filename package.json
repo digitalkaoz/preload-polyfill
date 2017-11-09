@@ -2,14 +2,15 @@
   "name": "preload-polyfill",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/polyfill.js",
   "scripts": {
-    "dev": "chokidar-cmd -c \"npm-run-parallel build:polyfill build:invoker\" -t *.js",
+    "dev": "npm run build && npm run watch",
+    "watch": "chokidar-cmd -c \"npm run build:polyfill && npm run build:invoker\" -t src/*.js",
     "cleanup": "rm -rf dist && mkdir dist",
-    "cs": "prettier --write *.js",
-    "build:polyfill": "BABEL_ENV=production babel polyfill.js -o dist/polyfill.js",
-    "build:invoker": "BABEL_ENV=production babel invoke.js -o dist/invoke.js",
-    "build": "npm run cleanup && npm run cs && npm-run-parallel build:polyfill build:invoker"
+    "cs": "prettier --write src/*.js",
+    "build:polyfill": "FILE=polyfill rollup -c",
+    "build:invoker": "FILE=invoke rollup -c",
+    "build": "npm run cleanup && npm run cs && BABEL_ENV=production npm run build:polyfill && BABEL_ENV=production npm run build:invoker"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +20,9 @@
     "@babel/preset-env": "^7.0.0-beta.31",
     "chokidar-cmd": "^1.2.1",
     "npm-run-parallel": "^0.6.0",
-    "prettier": "^1.8.1"
+    "prettier": "^1.8.1",
+    "rollup": "^0.51.2",
+    "rollup-plugin-babel": "^4.0.0-beta.0",
+    "rollup-plugin-uglify": "^2.0.1"
   }
 }

@@ -1,0 +1,23 @@
+{
+  "headers": [
+    {
+      "source": "/example/*.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "max-age=3600"
+        }
+      ]
+    },
+    {
+      "source": "/example/*.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "max-age=3600"
+        }
+      ]
+    }
+
+  ]
+}
