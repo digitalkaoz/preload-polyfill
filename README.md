@@ -22,12 +22,8 @@ TODOS:
     - [ ] track
     - [x] worker
     - [ ] video
-- [x] make MutationObserver optional
-- [x] make type=module nomodule work
-- [x] sort preloads according to preload-scanner priorities
 - [ ] document all the things
 - [ ] tests
-- [ ] get rid of `onload` attr
 
 ## Usage
 
