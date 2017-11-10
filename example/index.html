@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="/dist/polyfill.js"></script>
+        <script src="/dist/preload-polyfill.js"></script>
     </head>
     
     <body>
@@ -17,8 +17,5 @@
         
         <link rel="preload" critical as="script" type="module" href="module.js" />
         <link rel="preload" critical as="script" nomodule href="nomodule.js" />
-        
-        <script src="/dist/invoke.js"></script>
-        <!-- TODO resources are loaded twice once injecting them into the parent document ?WTF -->
     </body>
 </html>

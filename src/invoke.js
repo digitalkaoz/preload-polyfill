@@ -41,7 +41,7 @@ const invokeLinkResources = (preloads, delayExcecution = false) => {
     });
 };
 
-const invoke = () => {
+export const invokePreloads = () => {
   const preloads = getPreloads();
   const criticals = preloads.filter(link => link.hasAttribute("critical"));
   const noncriticals = preloads.filter(link => criticals.indexOf(link) === -1);
@@ -63,5 +63,3 @@ const invoke = () => {
   // check every X ms if all preloaded resources are fetched
   const interval = setInterval(processLinks, 50);
 };
-
-document.addEventListener("DOMContentLoaded", invoke);

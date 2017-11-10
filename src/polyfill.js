@@ -1,4 +1,5 @@
 import { polyfill } from "./observe";
+import { invokePreloads } from "./invoke";
 
 const preloadPolyfill = () => {
   // check if preload should be loaded
@@ -10,6 +11,8 @@ const preloadPolyfill = () => {
     console.warn("invoking preload-polyfill");
     polyfill();
   }
+
+  document.addEventListener("DOMContentLoaded", invokePreloads);
 };
 
 export default preloadPolyfill();

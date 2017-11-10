@@ -2,12 +2,11 @@ import babel from "rollup-plugin-babel";
 import uglify from "rollup-plugin-uglify";
 
 export default {
-  input: `src/${process.env.FILE}.js`,
+  input: `src/polyfill.js`,
   output: {
-    file: `dist/${process.env.FILE}.js`,
+    file: `dist/preload-polyfill.js`,
     format: "iife",
-    name: `preload${process.env.FILE.charAt(0).toUpperCase() +
-      process.env.FILE.slice(1)}`
+    name: `preload_polyfill`
   },
   plugins: [babel(), process.env.BABEL_ENV === 'production' && uglify()]
 };
