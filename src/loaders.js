@@ -11,19 +11,30 @@ const checkEs6 = () => {
 
 export const ES6 = checkEs6();
 
+/**
+ * called when a preload is loaded
+ */
 const onload = (event, element) => {
   if (window.LOADED_ITEMS) {
     window.LOADED_ITEMS.push(element.href);
   }
-  console.log(`preloaded "${element.href}"`);
 
   element.dispatchEvent(new CustomEvent("load", event));
+  console.log(`preloaded "${element.href}"`);
 
+  //immediate invoke css
   if (element.getAttribute("as") === "style") {
-    processCss(element);
+    if (window.requestAnimationFrame) {
+      window.requestAnimationFrame(() => processCss(element));
+    } else {
+      processCss(element);
+    }
   }
 };
 
+/**
+ * load preload with non-blocking xhr
+ */
 export const loadWithXhr = element => {
   const request = new XMLHttpRequest();
 
@@ -31,6 +42,7 @@ export const loadWithXhr = element => {
     element.getAttribute("as") === "script" ||
     element.getAttribute("as") === "worker"
   ) {
+    //check for type="module" / nomodule (load es6 or es5) depending on browser capabilties
     const nm = element.hasAttribute("nomodule");
     const m =
       element.hasAttribute("type") && element.getAttribute("type") === "module";
@@ -44,5 +56,5 @@ export const loadWithXhr = element => {
 
   request.addEventListener("load", event => onload(event, element));
   request.open("GET", element.href, true);
-  request.send(null);
+  request.send();
 };

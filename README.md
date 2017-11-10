@@ -6,7 +6,7 @@
 TODOS:
 -----
 
-- [ ] in firefox sometimes the resources are fetched again when dev-tools are open
+- [ ] in firefox sometimes the resources are fetched again
 - [ ] on error handling ()
 - [ ] With "disable-cache" the requests will be made twice
 - [ ] document all the things
