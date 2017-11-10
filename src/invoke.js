@@ -26,19 +26,19 @@ const invokeLinkResources = preloads => {
 
   // styles
   preloads
-    .filter(link => link.as === "style")
+    .filter(link => link.getAttribute("as") === "style")
     .forEach(link => processLink(link, processCss));
 
   // async scripts
   preloads
-    .filter(link => link.as === "script")
+    .filter(link => link.getAttribute("as") === "script")
     .filter(link => link.hasAttribute("async"))
     .sort(criticalSort)
     .forEach(link => processLink(link, processScript));
 
   // sync scripts
   preloads
-    .filter(link => link.as === "script")
+    .filter(link => link.getAttribute("as") === "script")
     .filter(link => !link.hasAttribute("async"))
     .sort(criticalSort)
     .some(link => {

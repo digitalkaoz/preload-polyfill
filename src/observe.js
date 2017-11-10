@@ -1,5 +1,4 @@
-import { createIframe } from "./dom";
-import { typeMap } from "./loaders";
+import { loadWithXhr } from "./loaders";
 
 const selector = 'link[rel="preload"]';
 const processed = [];
@@ -8,8 +7,14 @@ const processed = [];
  * sort like the preload scanner would do it (font > css > js > rest)
  */
 const prioritize = (a, b) => {
-  const aNumeric = a.as === "font" ? 0 : a.as === "style" ? 1 : 2;
-  const bNumeric = b.as === "font" ? 0 : b.as === "style" ? 1 : 2;
+  const aNumeric =
+    a.getAttribute("as") === "font"
+      ? 0
+      : a.getAttribute("as") === "style" ? 1 : 2;
+  const bNumeric =
+    b.getAttribute("as") === "font"
+      ? 0
+      : b.getAttribute("as") === "style" ? 1 : 2;
 
   if (aNumeric < bNumeric) return -1;
   if (aNumeric > bNumeric) return 1;
@@ -37,40 +42,35 @@ const preloadLinkByMutation = (mutations, iframeDocument) =>
       []
     )
     .sort(prioritize)
-    .forEach(element => preloadLinkByElement(element, iframeDocument));
+    .forEach(preloadLinkByElement);
 
 /**
  * do the background fetching for a [rel="preload"]
  */
-const preloadLinkByElement = (element, iframeDocument) => {
+const preloadLinkByElement = element => {
   if (processed.indexOf(element.href) !== -1) {
     return;
   }
 
   console.log(`loading "${element.href}"`);
 
-  const as = element.getAttribute("as");
-
-  if (typeMap[as]) {
-    typeMap[as](element, iframeDocument);
-    processed.push(element.href);
-  } else {
-    console.error(`dont know how to preload "${as}" yet`);
-  }
+  loadWithXhr(element);
+  processed.push(element.href);
 };
 
 /**
  * watch for preload elements to come after loading this script
  */
-const observeMutations = iframeDocument => {
+const observeMutations = () => {
   // preload link[rel="preload"] by mutation
   if (window.MutationObserver) {
-    new MutationObserver(mutations =>
-      preloadLinkByMutation(mutations, iframeDocument)
-    ).observe(document.documentElement, {
-      childList: true,
-      subtree: true
-    });
+    new MutationObserver(preloadLinkByMutation).observe(
+      document.documentElement,
+      {
+        childList: true,
+        subtree: true
+      }
+    );
   } else {
     const searchIntervall = setInterval(function() {
       if (document.readyState == "complete") {
@@ -84,34 +84,17 @@ const observeMutations = iframeDocument => {
 /**
  * scan and preload resources
  */
-const scanPreloads = iframeDocument => {
+const scanPreloads = () => {
   // preload link[rel="preload"] by selector
   Array.prototype.slice
     .call(document.querySelectorAll(selector), 0)
     .sort(prioritize)
-    .forEach(element => {
-      preloadLinkByElement(element, iframeDocument);
-    });
+    .forEach(preloadLinkByElement);
 };
 
 export const polyfill = () => {
   window.LOADED_ITEMS = [];
 
-  const { iframeDocument, iframeWindow } = createIframe();
-
-  const invoke = () => {
-    scanPreloads(iframeDocument);
-    observeMutations(iframeDocument);
-  };
-
-  if (
-    iframeDocument.readyState === "interactive" ||
-    iframeDocument.readyState === "complete"
-  ) {
-    // ie + safari
-    invoke();
-  } else {
-    // ff
-    iframeWindow.addEventListener("load", invoke);
-  }
+  scanPreloads();
+  observeMutations();
 };
