@@ -46,7 +46,10 @@ const invokeLinkResources = preloads => {
         removeLink(link);
         return false;
       }
-      if (window.PRELOAD_USED && !window.LOADED_ITEMS.indexOf(link.href)) {
+      if (
+        window.PRELOAD_USED &&
+        window.LOADED_ITEMS.indexOf(link.href) === -1
+      ) {
         return true;
       }
       processLink(link, processScript);
@@ -70,7 +73,7 @@ export const invokePreloads = () => {
     }
 
     //if all resources are processed, remove interval, otherwise check again in X ms
-    if (noncriticals.length === 0) {
+    if (criticals.length === 0 && noncriticals.length === 0) {
       clearInterval(interval);
       console.log("invoked all preloads");
     }
