@@ -1,4 +1,5 @@
 import { processScript, processCss, getPreloads } from "./dom";
+import { ES6 } from "./loaders";
 
 const criticalSort = (a, b) => {
   const aVal = a.hasAttribute("critical") ? 0 : 1;
@@ -41,7 +42,11 @@ const invokeLinkResources = preloads => {
     .filter(link => !link.hasAttribute("async"))
     .sort(criticalSort)
     .some(link => {
-      if (!window.LOADED_ITEMS.indexOf(link.href)) {
+      if (link.hasAttribute("nomodule") && ES6) {
+        removeLink(link);
+        return false;
+      }
+      if (window.PRELOAD_USED && !window.LOADED_ITEMS.indexOf(link.href)) {
         return true;
       }
       processLink(link, processScript);
@@ -67,6 +72,7 @@ export const invokePreloads = () => {
     //if all resources are processed, remove interval, otherwise check again in X ms
     if (noncriticals.length === 0) {
       clearInterval(interval);
+      console.log("invoked all preloads");
     }
   };
 

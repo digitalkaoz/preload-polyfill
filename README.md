@@ -32,6 +32,13 @@ This Polyfill supports the following types:
 
 https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
 
+simply use it as follows:
+
+```html
+<link rel="preload" critical as="script" href="jquery.js" />
+```
+
+
 ### Additional Features
 
 > beware those are not spec compliant features
@@ -41,7 +48,7 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
 those resources will be fetched non blocking, but executed first in order they appear
 
 ```html
-<link rel="preload" critical as="script" href="jquery.js" onload="loaded(this);revealJs(this)" />
+<link rel="preload" critical as="script" href="jquery.js" />
 ```
 
 **async**
@@ -49,7 +56,7 @@ those resources will be fetched non blocking, but executed first in order they a
 those resources will be fetched non blocking, but executed async
 
 ```html
-<link rel="preload" async as="script" href="async.js" onload="loaded(this);revealJs(this)" />
+<link rel="preload" async as="script" href="async.js" />
 ```
 
 **type="module"**
@@ -57,7 +64,7 @@ those resources will be fetched non blocking, but executed async
 those resources will only be fetched if browser understands es6
 
 ```html
-<link rel="preload" type="module" as="script" href="app.es6.js" onload="loaded(this);revealJs(this)" />
+<link rel="preload" type="module" as="script" href="app.es6.js" />
 ```
 
 **nomodule**
@@ -65,7 +72,7 @@ those resources will only be fetched if browser understands es6
 those resources will only be fetched if browser cant understand es6
 
 ```html
-<link rel="preload" nomodule as="script" href="app.legacy.js" onload="loaded(this);revealJs(this)" />
+<link rel="preload" nomodule as="script" href="app.legacy.js" />
 ```
 
 

@@ -27,13 +27,24 @@ export const createIframe = () => {
 export const processScript = link => {
   const script = document.createElement("script");
 
-  if (link.hasAttribute("async")) {
+  if (!link.hasAttribute("async")) {
     script.async = false;
   } else {
     script.async = link.hasAttribute("async");
   }
+
+  if (!window.PRELOAD_USED) {
+    if (link.hasAttribute("type")) {
+      script.type = link.getAttribute("type");
+    }
+    if (link.hasAttribute("nomodule")) {
+      script.setAttribute("nomodule", "nomodule");
+    }
+  }
+
   script.src = link.href;
 
+  link.rel = "none";
   link.parentNode.insertBefore(script, link);
 
   return script;

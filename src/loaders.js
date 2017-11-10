@@ -7,7 +7,7 @@ const checkEs6 = () => {
   }
 };
 
-const ES6 = checkEs6();
+export const ES6 = checkEs6();
 
 const onload = (event, doc, preload, element) => {
   if (preload) {
