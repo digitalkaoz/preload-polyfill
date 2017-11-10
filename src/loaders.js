@@ -17,11 +17,11 @@ const onload = (event, element) => {
   }
   console.log(`preloaded "${element.href}"`);
 
-  if (element.getAttribute("as") === "style") {
-    element.addEventListener("load", () => processCss(element));
-  }
-
   element.dispatchEvent(new CustomEvent("load", event));
+
+  if (element.getAttribute("as") === "style") {
+    processCss(element);
+  }
 };
 
 export const loadWithXhr = element => {
