@@ -1,11 +1,10 @@
 const checkEs6 = () => {
-  //TODO is there someting without eval?
   try {
-    eval("var foo = (x)=>x+1");
+    new Function("(a = 0) => a");
+    return true;
   } catch (e) {
     return false;
   }
-  return true;
 };
 
 const ES6 = checkEs6();
@@ -23,29 +22,48 @@ const onload = (event, doc, preload, element) => {
   element.dispatchEvent(new CustomEvent("load", event));
 };
 
-/*
-	https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
-
-    audio: Audio file.
-    document: An HTML document intended to be embedded inside a <frame> or <iframe>.
-    embed: A resource to be embedded inside an <embed> element.
-    fetch: Resource to be accessed by a fetch or XHR request, such as an ArrayBuffer or JSON file.
-    image: Image file.
-    object: A resource to be embedded inside an <embed> element.
-    track: WebVTT file.
-    video: Video file.
-*/
-
 export const typeMap = {
-  // forward [rel="preload"][as="script"] load event
+  // forward [rel="preload"][as="script"]
   script(element, iframeDocument) {
     loadWithIframe(element, iframeDocument);
   },
-  // forward [rel="preload"][as="worker"] load event
+  // forward [rel="preload"][as="worker"]
   worker(element, iframeDocument) {
     loadWithIframe(element, iframeDocument);
   },
-  // forward [rel="preload"][as="style"] load event
+  // forward [rel="preload"][as="audio"]
+  audio(element, iframeDocument) {
+    loadWithXhr(element, iframeDocument);
+  },
+  // forward [rel="preload"][as="embed"]
+  embed(element, iframeDocument) {
+    loadWithXhr(element, iframeDocument);
+  },
+  // forward [rel="preload"][as="video"]
+  video(element, iframeDocument) {
+    loadWithXhr(element, iframeDocument);
+  },
+  // forward [rel="preload"][as="track"]
+  track(element, iframeDocument) {
+    loadWithXhr(element, iframeDocument);
+  },
+  // forward [rel="preload"][as="fetch"]
+  fetch(element, iframeDocument) {
+    loadWithXhr(element, iframeDocument);
+  },
+  // forward [rel="preload"][as="document"]
+  document(element, iframeDocument) {
+    loadWithXhr(element, iframeDocument);
+  },
+  // forward [rel="preload"][as="image"]
+  image(element, iframeDocument) {
+    loadWithXhr(element, iframeDocument);
+  },
+  // forward [rel="preload"][as="object"]
+  object(element, iframeDocument) {
+    loadWithXhr(element, iframeDocument);
+  },
+  // forward [rel="preload"][as="style"]
   style(element, iframeDocument) {
     loadWithinIframe(element, iframeDocument);
   },

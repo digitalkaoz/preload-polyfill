@@ -8,24 +8,29 @@ TODOS:
 
 - [ ] on error handling ()
 - [ ] With "disable-cache" the requests will be made twice
-
-- [ ] implement all preloadable resources
-    - [x] js
-    - [x] css
-    - [x] font
-    - [ ] image
-    - [ ] audio
-    - [ ] document
-    - [ ] embed
-    - [ ] fetch
-    - [ ] object
-    - [ ] track
-    - [x] worker
-    - [ ] video
 - [ ] document all the things
+- [ ] get rid of window.GLOBALS
+- [ ] include simplehttp2server for `npm run dev`
 - [ ] tests
 
 ## Usage
+
+This Polyfill supports the following types:
+
+- [x] js
+- [x] css
+- [x] font
+- [x] image
+- [x] audio
+- [x] document
+- [x] embed
+- [x] fetch
+- [x] object
+- [x] track
+- [x] worker
+- [x] video
+
+https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
 
 ### Additional Features
 
