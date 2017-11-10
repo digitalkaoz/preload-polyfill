@@ -7,7 +7,7 @@ const preloadPolyfill = () => {
       throw Error;
     }
   } catch (error) {
-    console.log("using preload-polyfill");
+    console.warn("invoking preload-polyfill");
     polyfill();
   }
 };

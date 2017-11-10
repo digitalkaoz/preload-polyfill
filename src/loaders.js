@@ -1,3 +1,5 @@
+window.LOADED_ITEMS = [];
+
 const checkEs6 = () => {
   //TODO is there someting without eval?
   try {
@@ -17,6 +19,9 @@ const onload = (event, doc, preload, element) => {
   if (doc) {
     doc.head.removeChild(preload);
   }
+  window.LOADED_ITEMS.push(element.href);
+  console.log(`preloaded "${element.href}"`);
+
   element.dispatchEvent(new CustomEvent("load", event));
 };
 

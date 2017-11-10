@@ -1,61 +1,67 @@
-const invoke = () => {
-  var processed = [];
+import { processScript, processCss, getPreloads } from "./dom";
 
-  var invokeScript = function(link) {
-    if (processed.indexOf(link.href) !== -1) {
-      return;
-    }
-
-    var script = document.createElement("script");
-    script.async = link.hasAttribute("async");
-    script.src = link.href;
-
-    link.parentNode.insertBefore(script, link);
-
-    processed.push(link.href);
+const invokeLinkResources = (preloads, delayExcecution = false) => {
+  const removeLink = link => {
+    console.log(`processed preload "${link.href}"`);
+    preloads.splice(preloads.indexOf(link), 1);
   };
 
-  var invokeStyle = function(link) {
-    if (processed.indexOf(link.href) !== -1) {
-      return;
-    }
+  const constAsyncOrExecutable = (link, index, list) =>
+    window.LOADED_ITEMS.indexOf(list[index].href) ||
+    (index === 0 || window.LOADED_ITEMS.indexOf(list[index - 1].href) !== -1) ||
+    link.hasAttribute("async");
 
-    link.rel = "stylesheet";
-    link.onload = null;
+  preloads
+    .filter(link => link.as === "style")
+    .filter(constAsyncOrExecutable)
+    .forEach(link => {
+      if (window.LOADED_ITEMS.indexOf(link.href) !== -1) {
+        processCss(link);
+        removeLink(link);
+      }
+    });
 
-    processed.push(link.href);
-  };
+  preloads
+    .filter(link => link.as === "script")
+    .filter(constAsyncOrExecutable)
+    .sort((a, b) => {
+      const aVal = a.hasAttribute("critical") ? 0 : 1;
+      const bVal = b.hasAttribute("critical") ? 0 : 1;
 
-  var invokeScripts = function() {
-    document
-      .querySelectorAll("link[rel='preload'][as='script']")
-      .forEach(invokeScript.bind(this));
-  };
+      if (aVal < bVal) return -1;
+      if (aVal > bVal) return 1;
 
-  var invokeStyles = function() {
-    document
-      .querySelectorAll("link[rel='preload'][as='style']")
-      .forEach(invokeStyle.bind(this));
-  };
-
-  invokeScripts();
-  invokeStyles();
+      return 0;
+    })
+    .forEach(link => {
+      if (window.LOADED_ITEMS.indexOf(link.href) !== -1) {
+        processScript(link);
+        removeLink(link);
+      }
+    });
 };
 
-/*document.addEventListener("DOMContentLoaded", () => {
-  const preloads = document.querySelectorAll("link[rel='preload']");
-  // check every 50ms if all preloaded resources are fetched
-  const interval = setInterval(() => {
-    //filter unique urls    
-    let links = [];
-    preloads.forEach((el) => links.push(el.href));
-    links = links.filter((v,i,a) => a.indexOf(v) === i);
+const invoke = () => {
+  const preloads = getPreloads();
+  const criticals = preloads.filter(link => link.hasAttribute("critical"));
+  const noncriticals = preloads.filter(link => criticals.indexOf(link) === -1);
 
-    if(links.length === window.LOADED_ITEMS.length) {
-      clearInterval(interval);
-      invoke();        
+  const processLinks = () => {
+    if (criticals) {
+      invokeLinkResources(criticals);
     }
-  }, 50);
-});*/
 
-window.addEventListener("load", invoke);
+    if (criticals.length === 0) {
+      invokeLinkResources(noncriticals, true);
+    }
+
+    if (noncriticals.length === 0) {
+      clearInterval(interval);
+    }
+  };
+
+  // check every X ms if all preloaded resources are fetched
+  const interval = setInterval(processLinks, 50);
+};
+
+document.addEventListener("DOMContentLoaded", invoke);

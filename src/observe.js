@@ -12,10 +12,7 @@ const prioritize = (a, b) => {
   const bNumeric = b.as === "font" ? 0 : b.as === "style" ? 1 : 2;
 
   if (aNumeric < bNumeric) return -1;
-
-  if (aNumeric > bNumeric) {
-    return 1;
-  }
+  if (aNumeric > bNumeric) return 1;
 
   return 0;
 };
