@@ -15,11 +15,9 @@ export const ES6 = checkEs6();
  * called when a preload is loaded
  */
 const onload = (event, element) => {
-  if (window.LOADED_ITEMS) {
-    window.LOADED_ITEMS.push(element.href);
-  }
+  element.setAttribute("loaded", true);
 
-  element.dispatchEvent(new CustomEvent("load", event));
+  element.dispatchEvent(new CustomEvent(event.type, event));
   console.log(`preloaded "${element.href}"`);
 
   //immediate invoke css
@@ -54,7 +52,7 @@ export const loadWithXhr = element => {
     }
   }
 
-  request.addEventListener("load", event => onload(event, element));
+  request.addEventListener("loadend", event => onload(event, element));
   request.open("GET", element.href, true);
   request.send();
 };

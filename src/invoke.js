@@ -11,72 +11,64 @@ const criticalSort = (a, b) => {
   return 0;
 };
 
-const invokeLinkResources = preloads => {
+const invokeLinkResources = (preloads, polyfilled) => {
   const removeLink = link => {
     console.log(`processed preload "${link.href}"`);
     preloads.splice(preloads.indexOf(link), 1);
   };
 
   const processLink = link => {
-    if (
-      !window.PRELOAD_USED ||
-      (window.LOADED_ITEMS && window.LOADED_ITEMS.indexOf(link.href) !== -1)
-    ) {
-      processScript(link);
-      removeLink(link);
-    }
+    processScript(link, polyfilled);
+    removeLink(link);
   };
 
   // async scripts
-  preloads
-    .filter(link => link.getAttribute("as") === "script")
-    .filter(link => link.hasAttribute("async"))
-    .sort(criticalSort)
-    .forEach(processLink);
+  preloads.filter(link => link.hasAttribute("async")).forEach(link => {
+    if (link.hasAttribute("nomodule") && ES6) {
+      removeLink(link);
+      return false;
+    }
+
+    if (!polyfilled || (polyfilled && link.hasAttribute("loaded"))) {
+      processLink(link);
+    }
+  });
 
   // sync scripts
-  preloads
-    .filter(link => link.getAttribute("as") === "script")
-    .filter(link => !link.hasAttribute("async"))
-    .sort(criticalSort)
-    .some(link => {
-      if (link.hasAttribute("nomodule") && ES6) {
-        removeLink(link);
-        return false;
-      }
-      if (
-        window.PRELOAD_USED &&
-        window.LOADED_ITEMS.indexOf(link.href) === -1
-      ) {
-        return true;
-      }
-      processLink(link);
-    });
+  preloads.filter(link => !link.hasAttribute("async")).some(link => {
+    if (link.hasAttribute("nomodule") && ES6) {
+      removeLink(link);
+      return false;
+    }
+    if (polyfilled && !link.hasAttribute("loaded")) {
+      return true;
+    }
+
+    processLink(link);
+  });
 };
 
-export const invokePreloads = () => {
+export const invokePreloads = polyfilled => {
   const preloads = getPreloads(
     "link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
   );
-  const criticals = preloads.filter(link => link.hasAttribute("critical"));
-  const noncriticals = preloads.filter(link => criticals.indexOf(link) === -1);
-
-  let inProgress = false;
+  const criticals = preloads
+    .filter(link => link.hasAttribute("critical"))
+    .sort(criticalSort);
+  const noncriticals = preloads
+    .filter(link => criticals.indexOf(link) === -1)
+    .sort(criticalSort);
 
   const processLinks = () => {
     console.log("check for invokable preload invokations");
-    if (inProgress === true) {
-      return;
-    }
-    inProgress = true;
     // first comes the criticals
     if (criticals) {
-      invokeLinkResources(criticals);
+      invokeLinkResources(criticals, polyfilled);
     }
 
     //all other resources
     if (criticals.length === 0) {
-      invokeLinkResources(noncriticals);
+      invokeLinkResources(noncriticals, polyfilled);
     }
 
     //if all resources are processed, remove interval, otherwise check again in X ms
@@ -84,7 +76,6 @@ export const invokePreloads = () => {
       clearInterval(interval);
       console.log("invoked all preloads");
     }
-    inProgress = false;
   };
 
   // check every X ms if all preloaded resources are fetched

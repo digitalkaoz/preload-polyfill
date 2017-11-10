@@ -1,4 +1,4 @@
-export const processScript = link => {
+export const processScript = (link, polyfilled) => {
   const script = document.createElement("script");
 
   if (!link.hasAttribute("async")) {
@@ -7,13 +7,10 @@ export const processScript = link => {
     script.async = link.hasAttribute("async");
   }
 
-  if (!window.PRELOAD_USED) {
-    if (link.hasAttribute("type")) {
-      script.type = link.getAttribute("type");
-    }
-    if (link.hasAttribute("nomodule")) {
-      script.setAttribute("nomodule", "nomodule");
-    }
+  if (link.hasAttribute("type")) {
+    script.type = link.getAttribute("type");
+  } else if (link.hasAttribute("nomodule")) {
+    script.setAttribute("nomodule", "nomodule");
   }
 
   script.src = link.href;

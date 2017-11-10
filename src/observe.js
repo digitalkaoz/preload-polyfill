@@ -91,8 +91,6 @@ const scanPreloads = (selector = 'link[rel="preload"]') => {
 };
 
 export const polyfill = () => {
-  window.LOADED_ITEMS = [];
-
   scanPreloads();
   observeMutations();
 };

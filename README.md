@@ -10,7 +10,6 @@ TODOS:
 - [ ] on error handling ()
 - [ ] With "disable-cache" the requests will be made twice
 - [ ] document all the things
-- [ ] get rid of window.GLOBALS
 - [ ] include simplehttp2server for `npm run dev`
 - [ ] tests
 - [ ] fix criticals js but not css (css should be loaded independet of js)

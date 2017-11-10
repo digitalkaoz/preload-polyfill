@@ -1,6 +1,7 @@
 import { polyfill, observeMutations } from "./observe";
 import { invokePreloads } from "./invoke";
 
+//Custom Event Polyfill
 (() => {
   if (typeof window.CustomEvent === "function") return false;
 
@@ -21,10 +22,10 @@ import { invokePreloads } from "./invoke";
   window.CustomEvent = CustomEvent;
 })();
 
-window.PRELOAD_USED = false;
-
 const preloadPolyfill = () => {
   // check if preload should be loaded
+  let polyfilled = false;
+
   try {
     if (!document.createElement("link").relList.supports("preload")) {
       throw Error;
@@ -32,11 +33,13 @@ const preloadPolyfill = () => {
     observeMutations('link[rel="preload"][as="style"]');
   } catch (error) {
     console.warn("invoking preload-polyfill");
-    window.PRELOAD_USED = true;
+    polyfilled = true;
     polyfill();
   }
 
-  document.addEventListener("DOMContentLoaded", invokePreloads);
+  document.addEventListener("DOMContentLoaded", () =>
+    invokePreloads(polyfilled)
+  );
 };
 
 export default preloadPolyfill();
