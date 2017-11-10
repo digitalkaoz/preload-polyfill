@@ -17,8 +17,6 @@ export const processScript = link => {
   }
 
   script.src = link.href;
-
-  link.rel = "none";
   link.parentNode.insertBefore(script, link);
 
   return script;
@@ -31,13 +29,9 @@ export const processCss = link => {
   return link;
 };
 
-export const getPreloads = () => {
+export const getPreloads = selector => {
   const resources = [];
-  return toArray(
-    document.querySelectorAll(
-      "link[rel='preload'][as='script'],link[rel='preload'][as='style']"
-    )
-  ).filter(v => {
+  return toArray(document.querySelectorAll(selector)).filter(v => {
     if (resources.indexOf(v.href) === -1) {
       resources.push(v.href);
       return true;

@@ -1,3 +1,5 @@
+import { processCss } from "./dom";
+
 const checkEs6 = () => {
   try {
     new Function("(a = 0) => a");
@@ -10,8 +12,14 @@ const checkEs6 = () => {
 export const ES6 = checkEs6();
 
 const onload = (event, element) => {
-  window.LOADED_ITEMS.push(element.href);
+  if (window.LOADED_ITEMS) {
+    window.LOADED_ITEMS.push(element.href);
+  }
   console.log(`preloaded "${element.href}"`);
+
+  if (element.getAttribute("as") === "style") {
+    element.addEventListener("load", () => processCss(element));
+  }
 
   element.dispatchEvent(new CustomEvent("load", event));
 };

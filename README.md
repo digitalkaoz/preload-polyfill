@@ -6,7 +6,7 @@
 TODOS:
 -----
 
-- [ ] fix double downloading (sometimes)
+- [ ] in firefox sometimes the resources are fetched again when dev-tools are open
 - [ ] on error handling ()
 - [ ] With "disable-cache" the requests will be made twice
 - [ ] document all the things

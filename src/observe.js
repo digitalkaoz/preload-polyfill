@@ -1,6 +1,5 @@
 import { loadWithXhr } from "./loaders";
 
-const selector = 'link[rel="preload"]';
 const processed = [];
 
 /**
@@ -25,7 +24,7 @@ const prioritize = (a, b) => {
 /**
  * filters all [rel="preload"] from actual mutations and invokes "preloadLinkByElement"
  */
-const preloadLinkByMutation = (mutations, iframeDocument) =>
+const preloadLinkByMutation = (mutations, selector) =>
   mutations
     .reduce(
       (nodes, mutation) => nodes.concat.apply(nodes, mutation.addedNodes),
@@ -61,21 +60,20 @@ const preloadLinkByElement = element => {
 /**
  * watch for preload elements to come after loading this script
  */
-const observeMutations = () => {
+export const observeMutations = (selector = 'link[rel="preload"]') => {
   // preload link[rel="preload"] by mutation
   if (window.MutationObserver) {
-    new MutationObserver(preloadLinkByMutation).observe(
-      document.documentElement,
-      {
-        childList: true,
-        subtree: true
-      }
-    );
+    new MutationObserver(mutations =>
+      preloadLinkByMutation(mutations, selector)
+    ).observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
   } else {
     const searchIntervall = setInterval(function() {
       if (document.readyState == "complete") {
         clearInterval(searchIntervall);
-        scanPreloads();
+        scanPreloads(selector);
       }
     }, 20);
   }
@@ -84,7 +82,7 @@ const observeMutations = () => {
 /**
  * scan and preload resources
  */
-const scanPreloads = () => {
+const scanPreloads = (selector = 'link[rel="preload"]') => {
   // preload link[rel="preload"] by selector
   Array.prototype.slice
     .call(document.querySelectorAll(selector), 0)

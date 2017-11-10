@@ -1,4 +1,4 @@
-import { processScript, processCss, getPreloads } from "./dom";
+import { processScript, getPreloads } from "./dom";
 import { ES6 } from "./loaders";
 
 const criticalSort = (a, b) => {
@@ -17,24 +17,22 @@ const invokeLinkResources = preloads => {
     preloads.splice(preloads.indexOf(link), 1);
   };
 
-  const processLink = (link, invoke) => {
-    if (!window.PRELOAD_USED || window.LOADED_ITEMS.indexOf(link.href) !== -1) {
-      invoke(link);
+  const processLink = link => {
+    if (
+      !window.PRELOAD_USED ||
+      (window.LOADED_ITEMS && window.LOADED_ITEMS.indexOf(link.href) !== -1)
+    ) {
+      processScript(link);
       removeLink(link);
     }
   };
-
-  // styles
-  preloads
-    .filter(link => link.getAttribute("as") === "style")
-    .forEach(link => processLink(link, processCss));
 
   // async scripts
   preloads
     .filter(link => link.getAttribute("as") === "script")
     .filter(link => link.hasAttribute("async"))
     .sort(criticalSort)
-    .forEach(link => processLink(link, processScript));
+    .forEach(processLink);
 
   // sync scripts
   preloads
@@ -52,16 +50,25 @@ const invokeLinkResources = preloads => {
       ) {
         return true;
       }
-      processLink(link, processScript);
+      processLink(link);
     });
 };
 
 export const invokePreloads = () => {
-  const preloads = getPreloads();
+  const preloads = getPreloads(
+    "link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
+  );
   const criticals = preloads.filter(link => link.hasAttribute("critical"));
   const noncriticals = preloads.filter(link => criticals.indexOf(link) === -1);
 
+  let inProgress = false;
+
   const processLinks = () => {
+    console.log("check for invokable preload invokations");
+    if (inProgress === true) {
+      return;
+    }
+    inProgress = true;
     // first comes the criticals
     if (criticals) {
       invokeLinkResources(criticals);
@@ -77,6 +84,7 @@ export const invokePreloads = () => {
       clearInterval(interval);
       console.log("invoked all preloads");
     }
+    inProgress = false;
   };
 
   // check every X ms if all preloaded resources are fetched
