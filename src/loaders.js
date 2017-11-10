@@ -1,5 +1,3 @@
-window.LOADED_ITEMS = [];
-
 const checkEs6 = () => {
   //TODO is there someting without eval?
   try {

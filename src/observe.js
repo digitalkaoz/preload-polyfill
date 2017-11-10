@@ -95,6 +95,8 @@ const scanPreloads = iframeDocument => {
 };
 
 export const polyfill = () => {
+  window.LOADED_ITEMS = [];
+
   const { iframeDocument, iframeWindow } = createIframe();
 
   const invoke = () => {

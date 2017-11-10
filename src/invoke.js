@@ -7,6 +7,7 @@ const invokeLinkResources = (preloads, delayExcecution = false) => {
   };
 
   const constAsyncOrExecutable = (link, index, list) =>
+    !window.PRELOAD_USED ||
     window.LOADED_ITEMS.indexOf(list[index].href) ||
     (index === 0 || window.LOADED_ITEMS.indexOf(list[index - 1].href) !== -1) ||
     link.hasAttribute("async");
@@ -15,7 +16,10 @@ const invokeLinkResources = (preloads, delayExcecution = false) => {
     .filter(link => link.as === "style")
     .filter(constAsyncOrExecutable)
     .forEach(link => {
-      if (window.LOADED_ITEMS.indexOf(link.href) !== -1) {
+      if (
+        !window.PRELOAD_USED ||
+        window.LOADED_ITEMS.indexOf(link.href) !== -1
+      ) {
         processCss(link);
         removeLink(link);
       }
@@ -34,7 +38,10 @@ const invokeLinkResources = (preloads, delayExcecution = false) => {
       return 0;
     })
     .forEach(link => {
-      if (window.LOADED_ITEMS.indexOf(link.href) !== -1) {
+      if (
+        !window.PRELOAD_USED ||
+        window.LOADED_ITEMS.indexOf(link.href) !== -1
+      ) {
         processScript(link);
         removeLink(link);
       }
