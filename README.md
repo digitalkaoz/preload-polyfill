@@ -15,7 +15,7 @@ some good reads:
 TODOS:
 -----
 
-- [ ] in firefox sometimes the resources are fetched again
+- [ ] in firefox sometimes the resources are fetched again (in 56 always)
 - [ ] With "disable-cache" the requests will be made twice
 - [ ] document all the things
 - [ ] include simplehttp2server for `npm run dev`

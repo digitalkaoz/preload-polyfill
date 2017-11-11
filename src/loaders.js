@@ -36,10 +36,7 @@ const onload = (event, element) => {
   console.log(`preloaded "${element.href}"`);
 };
 
-/**
- * load preload with non-blocking xhr
- */
-const loadWithXhr = element => {
+const checkForESCapabilities = element => {
   if (
     element.getAttribute("as") === "script" ||
     element.getAttribute("as") === "worker"
@@ -50,8 +47,19 @@ const loadWithXhr = element => {
       element.hasAttribute("type") && element.getAttribute("type") === "module";
 
     if ((m && !ES6) || (nm && ES6)) {
-      return;
+      return true;
     }
+  }
+
+  return false;
+};
+
+/**
+ * load preload with non-blocking xhr
+ */
+const loadWithXhr = element => {
+  if (checkForESCapabilities(element)) {
+    return;
   }
 
   const request = new XMLHttpRequest();
@@ -66,18 +74,8 @@ const loadWithXhr = element => {
 };
 
 const loadWithIframe = element => {
-  if (
-    element.getAttribute("as") === "script" ||
-    element.getAttribute("as") === "worker"
-  ) {
-    //check for type="module" / nomodule (load es6 or es5) depending on browser capabilties
-    const nm = element.hasAttribute("nomodule");
-    const m =
-      element.hasAttribute("type") && element.getAttribute("type") === "module";
-
-    if ((m && !ES6) || (nm && ES6)) {
-      return;
-    }
+  if (checkForESCapabilities(element)) {
+    return;
   }
 
   const preload = document.createElement("iframe");
