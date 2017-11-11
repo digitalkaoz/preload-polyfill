@@ -1,5 +1,5 @@
-import { load } from "./loaders";
-
+import { load, onload, checkForESCapabilities } from "./loaders";
+import { getPreloads } from "./dom";
 const processed = [];
 
 /**
@@ -24,7 +24,7 @@ const prioritize = (a, b) => {
 /**
  * filters all [rel="preload"] from actual mutations and invokes "preloadLinkByElement"
  */
-const preloadLinkByMutation = (mutations, selector) =>
+const preloadLinkByMutation = (mutations, selector, eventOnly = false) =>
   mutations
     .reduce(
       (nodes, mutation) => nodes.concat.apply(nodes, mutation.addedNodes),
@@ -41,30 +41,42 @@ const preloadLinkByMutation = (mutations, selector) =>
       []
     )
     .sort(prioritize)
-    .forEach(preloadLinkByElement);
+    .forEach(element => preloadLinkByElement(element, eventOnly));
 
 /**
  * do the background fetching for a [rel="preload"]
  */
-const preloadLinkByElement = element => {
+const preloadLinkByElement = (element, eventOnly = false) => {
   if (processed.indexOf(element.href) !== -1) {
+    return;
+  }
+
+  if (checkForESCapabilities(element)) {
     return;
   }
 
   console.log(`loading "${element.href}"`);
 
-  load(element);
+  if (eventOnly) {
+    element.onload = () => onload(null, element, eventOnly);
+    //element.addEventListener("load", event => onload(event, element, eventOnly));
+  } else {
+    load(element);
+  }
   processed.push(element.href);
 };
 
 /**
  * watch for preload elements to come after loading this script
  */
-export const observeMutations = (selector = 'link[rel="preload"]') => {
+export const observeMutations = (
+  selector = 'link[rel="preload"]',
+  eventOnly = false
+) => {
   // preload link[rel="preload"] by mutation
   if (window.MutationObserver) {
     new MutationObserver(mutations =>
-      preloadLinkByMutation(mutations, selector)
+      preloadLinkByMutation(mutations, selector, eventOnly)
     ).observe(document.documentElement, {
       childList: true,
       subtree: true
@@ -73,7 +85,7 @@ export const observeMutations = (selector = 'link[rel="preload"]') => {
     const searchIntervall = setInterval(function() {
       if (document.readyState == "complete") {
         clearInterval(searchIntervall);
-        scanPreloads(selector);
+        scanPreloads(selector, eventOnly);
       }
     }, 20);
   }
@@ -82,15 +94,17 @@ export const observeMutations = (selector = 'link[rel="preload"]') => {
 /**
  * scan and preload resources
  */
-const scanPreloads = (selector = 'link[rel="preload"]') => {
+export const scanPreloads = (
+  selector = 'link[rel="preload"]',
+  eventOnly = false
+) => {
   // preload link[rel="preload"] by selector
-  Array.prototype.slice
-    .call(document.querySelectorAll(selector), 0)
+  getPreloads(selector)
     .sort(prioritize)
-    .forEach(preloadLinkByElement);
+    .forEach(element => preloadLinkByElement(element, eventOnly));
 };
 
 export const polyfill = selector => {
-  scanPreloads();
-  observeMutations();
+  scanPreloads(selector);
+  observeMutations(selector);
 };

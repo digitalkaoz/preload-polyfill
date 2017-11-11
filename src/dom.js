@@ -1,4 +1,4 @@
-export const processScript = (link, polyfilled) => {
+export const processScript = link => {
   const script = document.createElement("script");
 
   if (!link.hasAttribute("async") || link.hasAttribute("critical")) {

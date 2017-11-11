@@ -1,5 +1,5 @@
 import { processScript, getPreloads } from "./dom";
-import { ES6 } from "./loaders";
+import { checkForESCapabilities } from "./loaders";
 
 const criticalSort = (a, b) => {
   const aVal = a.hasAttribute("critical") ? 0 : 1;
@@ -15,44 +15,32 @@ const removeLink = (link, preloads) => {
   preloads.splice(preloads.indexOf(link), 1);
 };
 
-const processLink = (link, polyfilled, preloads) => {
-  processScript(link, polyfilled);
+const processLink = (link, preloads) => {
+  processScript(link);
   removeLink(link, preloads);
   console.log(`processed preload "${link.href}"`);
 };
 
-const invokeLinkResources = (preloads, polyfilled) => {
+const invokeLinkResources = preloads => {
   // async scripts
   preloads.filter(link => link.hasAttribute("async")).forEach(link => {
-    if (
-      (link.hasAttribute("nomodule") && ES6) ||
-      (link.getAttribute("type") === "module" && !ES6)
-    ) {
-      removeLink(link, preloads);
-    } else if (!polyfilled || link.hasAttribute("preloaded")) {
-      processLink(link, polyfilled, preloads);
+    if (link.hasAttribute("preloaded")) {
+      processLink(link, preloads);
     }
   });
 
   // sync scripts
   preloads.filter(link => !link.hasAttribute("async")).some(link => {
     //kick out modules or nomodules
-    if (
-      (link.hasAttribute("nomodule") && ES6) ||
-      (link.hasAttribute("type") &&
-        link.getAttribute("type") === "module" &&
-        !ES6)
-    ) {
-      removeLink(link, preloads);
-    } else if (!polyfilled || link.hasAttribute("preloaded")) {
-      processLink(link, polyfilled, preloads);
+    if (link.hasAttribute("preloaded")) {
+      processLink(link, preloads);
     } else {
       return true;
     }
   });
 };
 
-export const invokePreloads = polyfilled => {
+export const invokePreloads = () => {
   let interval;
 
   const processLinks = () => {
@@ -60,10 +48,14 @@ export const invokePreloads = polyfilled => {
       "link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
     );
     const criticals = preloads
-      .filter(link => link.hasAttribute("critical"))
+      .filter(
+        link => link.hasAttribute("critical") && !checkForESCapabilities(link)
+      )
       .sort(criticalSort);
     const noncriticals = preloads
-      .filter(link => criticals.indexOf(link) === -1)
+      .filter(
+        link => criticals.indexOf(link) === -1 && !checkForESCapabilities(link)
+      )
       .sort(criticalSort);
 
     console.log(
@@ -73,12 +65,12 @@ export const invokePreloads = polyfilled => {
     );
     // first comes the criticals
     if (criticals) {
-      invokeLinkResources(criticals, polyfilled);
+      invokeLinkResources(criticals);
     }
 
     //all other resources
     if (criticals.length === 0) {
-      invokeLinkResources(noncriticals, polyfilled);
+      invokeLinkResources(noncriticals);
     }
 
     //if all resources are processed, remove interval, otherwise check again in X ms

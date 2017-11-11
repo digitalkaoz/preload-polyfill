@@ -67,12 +67,12 @@ those resources will be fetched non blocking, but executed async
 <link rel="preload" async as="script" href="async.js" />
 ```
 
-**type="module"**
+**module**
 
 those resources will only be fetched if browser understands es6
 
 ```html
-<link rel="preload" type="module" as="script" href="app.es6.js" />
+<link rel="preload" module as="script" href="app.es6.js" />
 ```
 
 **nomodule**

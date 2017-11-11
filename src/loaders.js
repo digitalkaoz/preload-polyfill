@@ -21,7 +21,7 @@ const setLoad = element => {
 /**
  * called when a preload is loaded
  */
-const onload = (event, element) => {
+export const onload = (event, element, eventOnly = false) => {
   //immediate invoke css
   if (element.getAttribute("as") === "style") {
     if (window.requestAnimationFrame) {
@@ -32,19 +32,20 @@ const onload = (event, element) => {
   }
 
   element.setAttribute("preloaded", true);
-  element.dispatchEvent(new CustomEvent("load", event));
+  if (!eventOnly) {
+    element.dispatchEvent(new CustomEvent("load", event));
+  }
   console.log(`preloaded "${element.href}"`);
 };
 
-const checkForESCapabilities = element => {
+export const checkForESCapabilities = element => {
   if (
     element.getAttribute("as") === "script" ||
     element.getAttribute("as") === "worker"
   ) {
     //check for type="module" / nomodule (load es6 or es5) depending on browser capabilties
     const nm = element.hasAttribute("nomodule");
-    const m =
-      element.hasAttribute("type") && element.getAttribute("type") === "module";
+    const m = element.hasAttribute("module");
 
     if ((m && !ES6) || (nm && ES6)) {
       return true;
@@ -58,10 +59,6 @@ const checkForESCapabilities = element => {
  * load preload with non-blocking xhr
  */
 const loadWithXhr = element => {
-  if (checkForESCapabilities(element)) {
-    return;
-  }
-
   const request = new XMLHttpRequest();
 
   request.addEventListener("load", event => onload(event, element));
@@ -74,11 +71,8 @@ const loadWithXhr = element => {
 };
 
 const loadWithIframe = element => {
-  if (checkForESCapabilities(element)) {
-    return;
-  }
-
   const preload = document.createElement("iframe");
+
   preload.addEventListener("load", event => onload(event, element));
   preload.src = element.href;
 };

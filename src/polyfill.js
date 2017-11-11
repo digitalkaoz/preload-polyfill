@@ -30,17 +30,14 @@ const preloadPolyfill = () => {
     if (!document.createElement("link").relList.supports("preload")) {
       throw Error;
     }
-    observeMutations('link[rel="preload"][as="style"]');
+    observeMutations('link[rel="preload"]', true);
   } catch (error) {
-    console.log(error);
     console.warn("invoking preload-polyfill");
     polyfilled = true;
     polyfill('link[rel="preload"]');
   }
 
-  document.addEventListener("DOMContentLoaded", () =>
-    invokePreloads(polyfilled)
-  );
+  document.addEventListener("DOMContentLoaded", invokePreloads);
 };
 
 export default preloadPolyfill();
