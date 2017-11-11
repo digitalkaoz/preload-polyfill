@@ -1,4 +1,4 @@
-import { loadWithXhr } from "./loaders";
+import { load } from "./loaders";
 
 const processed = [];
 
@@ -53,7 +53,7 @@ const preloadLinkByElement = element => {
 
   console.log(`loading "${element.href}"`);
 
-  loadWithXhr(element);
+  load(element);
   processed.push(element.href);
 };
 
@@ -90,7 +90,7 @@ const scanPreloads = (selector = 'link[rel="preload"]') => {
     .forEach(preloadLinkByElement);
 };
 
-export const polyfill = () => {
+export const polyfill = selector => {
   scanPreloads();
   observeMutations();
 };

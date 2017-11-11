@@ -32,9 +32,10 @@ const preloadPolyfill = () => {
     }
     observeMutations('link[rel="preload"][as="style"]');
   } catch (error) {
+    console.log(error);
     console.warn("invoking preload-polyfill");
     polyfilled = true;
-    polyfill();
+    polyfill('link[rel="preload"]');
   }
 
   document.addEventListener("DOMContentLoaded", () =>
