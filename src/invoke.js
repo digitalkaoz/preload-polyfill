@@ -1,5 +1,4 @@
-import { processScript, getPreloads } from "./dom";
-import { checkForESCapabilities } from "./loaders";
+import { processScript, getPreloads, checkForESCapabilities } from "./dom";
 
 const criticalSort = (a, b) => {
   const aVal = a.hasAttribute("critical") ? 0 : 1;
@@ -77,6 +76,9 @@ export const invokePreloads = () => {
     if (criticals.length === 0 && noncriticals.length === 0) {
       clearInterval(interval);
       console.log("invoked all preloads");
+      if (performance.now) {
+        console.log(performance.now());
+      }
     }
   };
 

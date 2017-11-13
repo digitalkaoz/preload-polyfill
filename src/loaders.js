@@ -1,21 +1,11 @@
-import { processCss } from "./dom";
+import { processCss, createIframe, checkForESCapabilities } from "./dom";
 
-const checkEs6 = () => {
-  try {
-    new Function("(a = 0) => a");
-    console.log("ES6 capable browser");
-    return true;
-  } catch (e) {
-    console.log("ES5 capable browser");
-    return false;
-  }
-};
+let iframeDocument, iframeWindow;
 
-export const ES6 = checkEs6();
-
-const setLoad = element => {
-  element.setAttribute("preloaded", "loaded");
-  element.removeEventListener("load", setLoad);
+const setLoaded = element => {
+  element.setAttribute("preloaded", true);
+  element.removeEventListener("load", onload);
+  console.log(`preloaded "${element.href}"`);
 };
 
 /**
@@ -24,41 +14,23 @@ const setLoad = element => {
 export const onload = (event, element, eventOnly = false) => {
   //immediate invoke css
   if (element.getAttribute("as") === "style") {
-    if (window.requestAnimationFrame) {
-      window.requestAnimationFrame(() => processCss(element));
-    } else {
-      processCss(element);
-    }
+    processCss(element);
+    setLoaded(element);
+
+    return;
   }
 
-  element.setAttribute("preloaded", true);
+  setLoaded(element);
+
   if (!eventOnly) {
     element.dispatchEvent(new CustomEvent("load", event));
   }
-  console.log(`preloaded "${element.href}"`);
-};
-
-export const checkForESCapabilities = element => {
-  if (
-    element.getAttribute("as") === "script" ||
-    element.getAttribute("as") === "worker"
-  ) {
-    //check for type="module" / nomodule (load es6 or es5) depending on browser capabilties
-    const nm = element.hasAttribute("nomodule");
-    const m = element.hasAttribute("module");
-
-    if ((m && !ES6) || (nm && ES6)) {
-      return true;
-    }
-  }
-
-  return false;
 };
 
 /**
  * load preload with non-blocking xhr
  */
-const loadWithXhr = element => {
+const loadAsXhr = element => {
   const request = new XMLHttpRequest();
 
   request.addEventListener("load", event => onload(event, element));
@@ -70,11 +42,82 @@ const loadWithXhr = element => {
   request.send();
 };
 
-const loadWithIframe = element => {
-  const preload = document.createElement("iframe");
-
-  preload.addEventListener("load", event => onload(event, element));
-  preload.src = element.href;
+const loadImage = element => {
+  const img = new Image();
+  img.onload = event => onload(event, element);
+  img.src = element.href;
 };
 
-export const load = loadWithXhr;
+const loadStyle = element => {
+  element.addEventListener("load", event => onload(event, element, true));
+
+  element.media = "none";
+  element.type = "text/css";
+  element.rel = "stylesheet";
+};
+
+const loadFont = element => {
+  if (!document.fonts) {
+    return loadAsXhr(element);
+  }
+
+  //TODO adding ttf ... to fontfaceset
+  if (!element.hasAttribute("name")) {
+    console.warn(
+      "Webfonts can only be preloaded through FontFace if you set a 'name=FontName' property on the link"
+    );
+    return loadAsXhr(element);
+  }
+
+  var f = new FontFace(element.getAttribute("name"), `url(${element.href})`);
+
+  f
+    .load(element.href)
+    .then(loadedFace => {
+      document.fonts.add(loadedFace);
+      onload(null, element);
+    })
+    .catch(e => console.error);
+};
+
+const loadScript = element => {
+  if (checkForESCapabilities(element)) {
+    return;
+  }
+
+  return loadAsXhr(element);
+
+  //TODO
+  const script = document.createElement("script");
+
+  // ie start loading, but
+  if (script.onreadystatechange) {
+    script.onreadystatechange = event => {
+      if (script.readyState == "loaded") {
+        onload(event, element);
+      }
+    };
+    script.src = element.href;
+  } else {
+    return loadAsXhr(element);
+  }
+};
+
+export const load = element => {
+  switch (element.getAttribute("as")) {
+    case "script":
+      loadScript(element);
+      break;
+    case "image":
+      loadImage(element);
+      break;
+    case "style":
+      loadStyle(element);
+      break;
+    case "font":
+      loadFont(element);
+      break;
+    default:
+      loadAsXhr(element);
+  }
+};

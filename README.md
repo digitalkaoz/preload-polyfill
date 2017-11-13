@@ -15,28 +15,30 @@ some good reads:
 TODOS:
 -----
 
-- [ ] in firefox sometimes the resources are fetched again (in 56 always)
+- [ ] firefox sometimes failed to grep the preloaded resources from cache
+- [ ] avoid re-requesting resources if they should be cached 
 - [ ] With "disable-cache" the requests will be made twice
 - [ ] document all the things
 - [ ] include simplehttp2server for `npm run dev`
-- [ ] tests
+- [ ] tests 
+- [ ] media support (https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content#Including_media)
 
 ## Usage
 
 This Polyfill supports the following types:
 
-- [x] js
+- [] js
 - [x] css
 - [x] font
 - [x] image
-- [x] audio
-- [x] document
-- [x] embed
-- [x] fetch
-- [x] object
-- [x] track
-- [x] worker
-- [x] video
+- [] audio
+- [] document
+- [] embed
+- [] fetch
+- [] object
+- [] track
+- [] worker
+- [] video
 
 https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
 
@@ -57,6 +59,14 @@ those resources will be fetched non blocking, but executed first in order they a
 
 ```html
 <link rel="preload" critical as="script" href="jquery.js" />
+```
+
+**fonts**
+
+to preload fonts correctly you have to set a name property on the links
+
+```html
+<link rel="preload" name="FontName" as="font" crossorigin type="font/woff2" href="font.woff2" />
 ```
 
 **async**

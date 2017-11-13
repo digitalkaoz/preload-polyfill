@@ -1,5 +1,5 @@
-import { load, onload, checkForESCapabilities } from "./loaders";
-import { getPreloads } from "./dom";
+import { load, onload } from "./loaders";
+import { getPreloads, checkForESCapabilities } from "./dom";
 const processed = [];
 
 /**
@@ -7,11 +7,11 @@ const processed = [];
  */
 const prioritize = (a, b) => {
   const aNumeric =
-    a.getAttribute("as") === "font"
+    a.getAttribute("as") === "font" || a.hasAttribute("critical")
       ? 0
       : a.getAttribute("as") === "style" ? 1 : 2;
   const bNumeric =
-    b.getAttribute("as") === "font"
+    b.getAttribute("as") === "font" || b.hasAttribute("critical")
       ? 0
       : b.getAttribute("as") === "style" ? 1 : 2;
 

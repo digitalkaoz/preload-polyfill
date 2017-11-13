@@ -1,0 +1,36 @@
+{
+    "headers": [
+      {
+        "source": "/example/*.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=3600"
+          }
+        ]
+      },
+      {
+        "source": "/example/*.css",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=3600"
+          }
+        ]
+      },
+      {
+        "source": "/example/*.woff2",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=3600"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/font-woff2"
+          }
+
+        ]
+      }  
+    ]
+  }

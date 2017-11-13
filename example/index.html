@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <script src="/dist/preload-polyfill.js"></script>
+            <link rel="preload" name="Raleway" as="font" type="font/woff2" crossorigin href="font.woff2"/>
+            <script src="/dist/preload-polyfill.js"></script>
     </head>
     
     <body>
+            <!-- deduplication -->
         <link rel="preload" as="script" href="foo.js" />
         <link rel="preload" as="script" href="foo.js" />
+        <!-- js -->
         <link rel="preload" as="script" href="bar.js" />
-        <img src="img_fjords.jpg" style="width:100%"/>
 
+        <!-- imgage -->
+        <link rel="preload" as="image" href="img_fjords.jpg" />
+        <img id="img" style="width:100%"/>
+
+        <!-- style -->
         <link rel="preload" as="style" href="foo.css"/>
         <link rel="preload" as="document" href="."/>
         <link rel="preload" as="fetch" href="."/>
         
+        <!-- webfont -->
+
+        
         <h1>webfont</h1>
         
+        <!-- module/nomodule -->
         <link rel="preload" critical as="script" module href="module.js" />
         <link rel="preload" critical as="script" nomodule href="nomodule.js" />
     </body>
