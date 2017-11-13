@@ -86,21 +86,6 @@ const loadScript = element => {
   }
 
   return loadAsXhr(element);
-
-  //TODO
-  const script = document.createElement("script");
-
-  // ie start loading, but
-  if (script.onreadystatechange) {
-    script.onreadystatechange = event => {
-      if (script.readyState == "loaded") {
-        onload(event, element);
-      }
-    };
-    script.src = element.href;
-  } else {
-    return loadAsXhr(element);
-  }
 };
 
 export const load = element => {

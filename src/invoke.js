@@ -40,12 +40,17 @@ const invokeLinkResources = preloads => {
 };
 
 export const invokePreloads = () => {
+  if (performance.now) {
+    console.log(performance.now());
+  }
+
   let interval;
 
+  const preloads = getPreloads(
+    "link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
+  );
+
   const processLinks = () => {
-    const preloads = getPreloads(
-      "link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
-    );
     const criticals = preloads
       .filter(
         link => link.hasAttribute("critical") && !checkForESCapabilities(link)

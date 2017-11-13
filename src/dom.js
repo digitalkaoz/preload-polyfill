@@ -1,10 +1,16 @@
+const processed = [];
+
 export const processScript = link => {
+  if (processed.indexOf(link.href) !== -1) {
+    return;
+  }
+
   const script = document.createElement("script");
 
   if (!link.hasAttribute("async") || link.hasAttribute("critical")) {
-    script.setAttribute("async", false);
+    script.async = false;
   } else {
-    script.setAttribute("async", link.hasAttribute("async"));
+    script.async = link.hasAttribute("async");
   }
 
   //IE seems to dont understand async=false ?!
@@ -14,11 +20,16 @@ export const processScript = link => {
 
   script.setAttribute("src", link.href);
   link.insertAdjacentElement("afterend", script);
+  processed.push(link.href);
 
   return script;
 };
 
 const convertToStylesheet = link => {
+  if (processed.indexOf(link.href) !== -1) {
+    return;
+  }
+
   if (link.hasAttribute("as")) {
     if (link.getAttribute("rel") === "preload") {
       link.setAttribute("rel", "stylesheet");
@@ -27,6 +38,8 @@ const convertToStylesheet = link => {
 
     link.removeAttribute("as");
     link.setAttribute("media", "all");
+
+    processed.push(link.href);
   }
 };
 

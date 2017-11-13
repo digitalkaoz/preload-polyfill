@@ -22,6 +22,9 @@ import { invokePreloads } from "./invoke";
   window.CustomEvent = CustomEvent;
 })();
 
+/**
+ * entrypoint, also binds DOMContentLoaded to the invocation of preloaded scripts
+ */
 const preloadPolyfill = () => {
   // check if preload should be loaded
   let polyfilled = false;

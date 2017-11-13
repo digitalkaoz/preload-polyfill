@@ -6,17 +6,19 @@
 
 `preload` seems the best async loading mechanism today...
 
+https://caniuse.com/#search=preload
+
 some good reads:
 
 * https://medium.com/reloading/preload-prefetch-and-priorities-in-chrome-776165961bbf
 * https://hacks.mozilla.org/2017/09/building-the-dom-faster-speculative-parsing-async-defer-and-preload/
 * https://www.smashingmagazine.com/2016/02/preload-what-is-it-good-for/
+* https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
 
 TODOS:
 -----
 
 - [ ] firefox sometimes failed to grep the preloaded resources from cache
-- [ ] avoid re-requesting resources if they should be cached 
 - [ ] With "disable-cache" the requests will be made twice
 - [ ] document all the things
 - [ ] include simplehttp2server for `npm run dev`
