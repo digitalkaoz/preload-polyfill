@@ -27,10 +27,26 @@ export const onload = (event, element, eventOnly = false) => {
   }
 };
 
+const loadWithFetch = element => {
+  const options = {
+    method: "GET",
+    mode: "cors",
+    cache: "force-cache"
+  };
+
+  fetch(element.href, options)
+    .then(() => onload(null, element))
+    .catch(() => onload(null, element));
+};
+
 /**
  * load preload with non-blocking xhr
  */
-const loadAsXhr = element => {
+const loadWithXhr = element => {
+  if (window.fetch) {
+    return loadWithFetch(element);
+  }
+
   const request = new XMLHttpRequest();
 
   request.addEventListener("load", event => onload(event, element));
@@ -58,7 +74,7 @@ const loadStyle = element => {
 
 const loadFont = element => {
   if (!document.fonts) {
-    return loadAsXhr(element);
+    return loadWithXhr(element);
   }
 
   //TODO adding ttf ... to fontfaceset
@@ -66,7 +82,7 @@ const loadFont = element => {
     console.warn(
       "Webfonts can only be preloaded through FontFace if you set a 'name=FontName' property on the link"
     );
-    return loadAsXhr(element);
+    return loadWithXhr(element);
   }
 
   var f = new FontFace(element.getAttribute("name"), `url(${element.href})`);
@@ -85,7 +101,7 @@ const loadScript = element => {
     return;
   }
 
-  return loadAsXhr(element);
+  return loadWithXhr(element);
 };
 
 export const load = element => {
@@ -103,6 +119,6 @@ export const load = element => {
       loadFont(element);
       break;
     default:
-      loadAsXhr(element);
+      loadWithXhr(element);
   }
 };
