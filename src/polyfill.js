@@ -1,27 +1,6 @@
 import { polyfill, observeMutations } from "./observe";
 import { invokePreloads } from "./invoke";
 
-//Custom Event Polyfill
-(() => {
-  if (typeof window.CustomEvent === "function") return false;
-
-  CustomEvent = (event, params) => {
-    params = params || { bubbles: false, cancelable: false, detail: undefined };
-    var evt = document.createEvent("CustomEvent");
-    evt.initCustomEvent(
-      event,
-      params.bubbles,
-      params.cancelable,
-      params.detail
-    );
-    return evt;
-  };
-
-  CustomEvent.prototype = window.Event.prototype;
-
-  window.CustomEvent = CustomEvent;
-})();
-
 /**
  * entrypoint, also binds DOMContentLoaded to the invocation of preloaded scripts
  */

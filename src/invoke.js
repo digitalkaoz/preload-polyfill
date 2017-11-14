@@ -50,18 +50,18 @@ export const invokePreloads = () => {
     "link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
   );
 
-  const processLinks = () => {
-    const criticals = preloads
-      .filter(
-        link => link.hasAttribute("critical") && !checkForESCapabilities(link)
-      )
-      .sort(criticalSort);
-    const noncriticals = preloads
-      .filter(
-        link => criticals.indexOf(link) === -1 && !checkForESCapabilities(link)
-      )
-      .sort(criticalSort);
+  const criticals = preloads
+    .filter(
+      link => link.hasAttribute("critical") && !checkForESCapabilities(link)
+    )
+    .sort(criticalSort);
+  const noncriticals = preloads
+    .filter(
+      link => criticals.indexOf(link) === -1 && !checkForESCapabilities(link)
+    )
+    .sort(criticalSort);
 
+  const processLinks = () => {
     console.log(
       "check for invokable preload invocations",
       criticals,
@@ -89,4 +89,16 @@ export const invokePreloads = () => {
 
   // check every X ms if all preloaded resources are fetched
   interval = setInterval(processLinks, 50);
+
+  window.addEventListener("load", () => {
+    if (interval) {
+      clearInterval(interval);
+
+      if (criticals.length || noncriticals.length) {
+        console.error("could not invoke all preloads!");
+      } else {
+        console.log("invoked all preloads");
+      }
+    }
+  });
 };
