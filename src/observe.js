@@ -34,7 +34,7 @@ const preloadLinkByMutation = (mutations, selector, eventOnly = false) =>
       (nodes, node) =>
         nodes.concat.apply(
           nodes,
-          (node.matches && node.matches(selector) && node) ||
+          (node.matches && node.matches(selector) && [node]) ||
             (node.querySelectorAll && node.querySelectorAll(selector)) ||
             []
         ),
