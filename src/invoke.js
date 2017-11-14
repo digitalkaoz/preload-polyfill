@@ -84,8 +84,6 @@ export const invokePreloads = () => {
 
         if (criticals.length || noncriticals.length) {
           console.error("could not invoke all preloads!");
-        } else {
-          console.log("invoked all preloads");
         }
       }
     }, 10000);
