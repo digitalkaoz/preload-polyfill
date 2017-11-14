@@ -90,15 +90,18 @@ export const invokePreloads = () => {
   // check every X ms if all preloaded resources are fetched
   interval = setInterval(processLinks, 50);
 
+  // kill the listening 10s after window.load
   window.addEventListener("load", () => {
-    if (interval) {
-      clearInterval(interval);
+    setTimeout(() => {
+      if (interval) {
+        clearInterval(interval);
 
-      if (criticals.length || noncriticals.length) {
-        console.error("could not invoke all preloads!");
-      } else {
-        console.log("invoked all preloads");
+        if (criticals.length || noncriticals.length) {
+          console.error("could not invoke all preloads!");
+        } else {
+          console.log("invoked all preloads");
+        }
       }
-    }
+    }, 10000);
   });
 };
