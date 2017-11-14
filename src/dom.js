@@ -66,10 +66,15 @@ const checkEs6 = () => {
 
 const ES6 = checkEs6();
 
-export const checkForESCapabilities = element => {
+/**
+ * this skips type="module" for browsers that dont understand es6
+ * and skips nomodule for browsers that understand es6
+ */
+export const skipNonMatchingModules = element => {
   if (
-    element.getAttribute("as") === "script" ||
-    element.getAttribute("as") === "worker"
+    (element.getAttribute("as") === "script" ||
+      element.getAttribute("as") === "worker") &&
+    (element.hasAttribute("nomodule") || element.hasAttribute("module"))
   ) {
     //check for type="module" / nomodule (load es6 or es5) depending on browser capabilties
     const nm = element.hasAttribute("nomodule");

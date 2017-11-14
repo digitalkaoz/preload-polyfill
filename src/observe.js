@@ -1,5 +1,5 @@
 import { load, onload } from "./loaders";
-import { getPreloads, checkForESCapabilities } from "./dom";
+import { getPreloads, skipNonMatchingModules } from "./dom";
 const processed = [];
 
 /**
@@ -51,7 +51,7 @@ const preloadLinkByElement = (element, eventOnly = false) => {
     return;
   }
 
-  if (checkForESCapabilities(element)) {
+  if (skipNonMatchingModules(element)) {
     return;
   }
 

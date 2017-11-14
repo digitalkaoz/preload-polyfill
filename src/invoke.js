@@ -1,14 +1,4 @@
-import { processScript, getPreloads, checkForESCapabilities } from "./dom";
-
-const criticalSort = (a, b) => {
-  const aVal = a.hasAttribute("critical") ? 0 : 1;
-  const bVal = b.hasAttribute("critical") ? 0 : 1;
-
-  if (aVal < bVal) return -1;
-  if (aVal > bVal) return 1;
-
-  return 0;
-};
+import { processScript, getPreloads, skipNonMatchingModules } from "./dom";
 
 const removeLink = (link, preloads) => {
   preloads.splice(preloads.indexOf(link), 1);
@@ -50,16 +40,12 @@ export const invokePreloads = () => {
     "link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
   );
 
-  const criticals = preloads
-    .filter(
-      link => link.hasAttribute("critical") && !checkForESCapabilities(link)
-    )
-    .sort(criticalSort);
-  const noncriticals = preloads
-    .filter(
-      link => criticals.indexOf(link) === -1 && !checkForESCapabilities(link)
-    )
-    .sort(criticalSort);
+  const criticals = preloads.filter(
+    link => link.hasAttribute("critical") && !skipNonMatchingModules(link)
+  );
+  const noncriticals = preloads.filter(
+    link => criticals.indexOf(link) === -1 && !skipNonMatchingModules(link)
+  );
 
   const processLinks = () => {
     console.log(

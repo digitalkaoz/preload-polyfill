@@ -1,4 +1,4 @@
-import { processCss, createIframe, checkForESCapabilities } from "./dom";
+import { processCss, createIframe, skipNonMatchingModules } from "./dom";
 
 let iframeDocument, iframeWindow;
 
@@ -97,7 +97,7 @@ const loadFont = element => {
 };
 
 const loadScript = element => {
-  if (checkForESCapabilities(element)) {
+  if (skipNonMatchingModules(element)) {
     return;
   }
 
