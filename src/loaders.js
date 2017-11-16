@@ -1,6 +1,4 @@
-import { processCss, createIframe, skipNonMatchingModules } from "./dom";
-
-let iframeDocument, iframeWindow;
+import { processCss, skipNonMatchingModules } from "./dom";
 
 const setLoaded = element => {
   element.setAttribute("preloaded", true);
