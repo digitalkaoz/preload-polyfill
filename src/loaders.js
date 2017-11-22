@@ -99,6 +99,10 @@ const loadScript = element => {
     return;
   }
 
+  if (element.getAttribute("rel") === "nomodule") {
+    element.setAttribute("rel", "preload");
+  }
+
   return loadWithXhr(element);
 };
 

@@ -64,10 +64,11 @@ export const skipNonMatchingModules = element => {
   if (
     (element.getAttribute("as") === "script" ||
       element.getAttribute("as") === "worker") &&
-    (element.hasAttribute("nomodule") || element.hasAttribute("module"))
+    (element.getAttribute("rel") === "nomodule" ||
+      element.hasAttribute("module"))
   ) {
     //check for type="module" / nomodule (load es6 or es5) depending on browser capabilties
-    const nm = element.hasAttribute("nomodule");
+    const nm = element.getAttribute("rel") === "nomodule";
     const m = element.hasAttribute("module");
 
     if ((m && !ES6) || (nm && ES6)) {

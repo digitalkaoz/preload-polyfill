@@ -5,9 +5,6 @@ import { invokePreloads } from "./invoke";
  * entrypoint, also binds DOMContentLoaded to the invocation of preloaded scripts
  */
 const preloadPolyfill = () => {
-  // check if preload should be loaded
-  let polyfilled = false;
-
   try {
     if (!document.createElement("link").relList.supports("preload")) {
       throw Error;
@@ -15,8 +12,7 @@ const preloadPolyfill = () => {
     observeMutations('link[rel="preload"]', true);
   } catch (error) {
     console.warn("invoking preload-polyfill");
-    polyfilled = true;
-    polyfill('link[rel="preload"]');
+    polyfill('link[rel="preload"],link[rel="nomodule"]');
   }
 
   document.addEventListener("DOMContentLoaded", invokePreloads);

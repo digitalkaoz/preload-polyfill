@@ -29,7 +29,7 @@ export const invokePreloads = () => {
   let interval;
 
   const preloads = getPreloads(
-    "link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
+    "link[rel='nomodule'],link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
   );
 
   let criticals = preloads.filter(

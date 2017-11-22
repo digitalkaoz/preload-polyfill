@@ -82,7 +82,7 @@ those resources will only be fetched if browser understands es6
 those resources will only be fetched if browser cant understand es6
 
 ```html
-<link rel="preload" nomodule as="script" href="app.legacy.js" />
+<link rel="nomodule" as="script" href="app.legacy.js" />
 ```
 
 

@@ -82,9 +82,9 @@ export const observeMutations = (
       subtree: true
     });
   } else {
-    const searchIntervall = setInterval(function() {
+    const searchInterval = setInterval(() => {
       if (document.readyState == "complete") {
-        clearInterval(searchIntervall);
+        clearInterval(searchInterval);
         scanPreloads(selector, eventOnly);
       }
     }, 20);
