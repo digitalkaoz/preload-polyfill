@@ -7,8 +7,10 @@
     "dev": "npm run watch",
     "watch": "npm run build:polyfill && chokidar-cmd -c \"npm run build:polyfill\" -t src/*.js",
     "cs": "prettier --write src/*.js",
-    "build:polyfill": "rollup -c",
-    "build": "npm run cs && BABEL_ENV=production npm run build:polyfill"
+    "build:dev": "rollup -c",
+    "build:prod": "BABEL_ENV=production rollup -c",
+    "build:staging" : "BABEL_ENV=staging rollup -c",
+    "build": "npm run cs && npm run build:dev && npm run build:prod && npm run build:staging"
   },
   "author": "",
   "license": "ISC",
