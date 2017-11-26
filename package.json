@@ -1,7 +1,7 @@
 {
   "name": "@digitalkaoz/preload-polyfill",
-  "version": "1.13.1",
-  "description": "",
+  "version": "1.14.0",
+  "description": "polyfilling [link rel=preload]",
   "main": "dist/preload-polyfill.js",
   "scripts": {
     "dev": "npm run watch",
@@ -13,7 +13,11 @@
     "build": "npm run cs && npm run build:dev && npm run build:prod && npm run build:staging",
     "server": "simplehttp2server & open https://localhost:5000/example/"
   },
-  "author": "",
+  "author": "Robert Schönthal <robert.schoenthal@gmail.com>",
+  "contributors: [
+    "Christian Haller",
+    "Patrick Eickmeier"
+  ],
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.31",
