@@ -14,7 +14,7 @@
     "server": "simplehttp2server & open https://localhost:5000/example/"
   },
   "author": "Robert Schönthal <robert.schoenthal@gmail.com>",
-  "contributors: [
+  "contributors": [
     "Christian Haller",
     "Patrick Eickmeier"
   ],
