@@ -9,8 +9,9 @@
     "cs": "prettier --write src/*.js",
     "build:dev": "rollup -c",
     "build:prod": "BABEL_ENV=production rollup -c",
-    "build:staging" : "BABEL_ENV=staging rollup -c",
-    "build": "npm run cs && npm run build:dev && npm run build:prod && npm run build:staging"
+    "build:staging": "BABEL_ENV=staging rollup -c",
+    "build": "npm run cs && npm run build:dev && npm run build:prod && npm run build:staging",
+    "server": "simplehttp2server & open https://localhost:5000/example/"
   },
   "author": "",
   "license": "ISC",
@@ -24,5 +25,8 @@
     "rollup": "^0.51.2",
     "rollup-plugin-babel": "^4.0.0-beta.0",
     "rollup-plugin-uglify": "^2.0.1"
+  },
+  "dependencies": {
+    "simplehttp2server": "^2.0.0"
   }
 }
