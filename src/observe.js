@@ -79,7 +79,8 @@ export const observeMutations = (
       preloadLinkByMutation(mutations, selector, eventOnly)
     ).observe(document.documentElement, {
       childList: true,
-      subtree: true
+      subtree: false,
+      attributeFilter: ["rel"]
     });
   } else {
     const searchInterval = setInterval(() => {

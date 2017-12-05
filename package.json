@@ -1,11 +1,11 @@
 {
   "name": "@digitalkaoz/preload-polyfill",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "polyfilling [link rel=preload]",
   "main": "dist/preload-polyfill.js",
   "scripts": {
     "dev": "npm run watch",
-    "watch": "npm run build:polyfill && chokidar-cmd -c \"npm run build:polyfill\" -t src/*.js",
+    "watch": "npm run build:dev && chokidar-cmd -c \"npm run build:dev\" -t src/*.js",
     "cs": "prettier --write src/*.js",
     "build:dev": "rollup -c",
     "build:prod": "BABEL_ENV=production rollup -c",
