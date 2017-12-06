@@ -24,24 +24,26 @@ const prioritize = (a, b) => {
 /**
  * filters all [rel="preload"] from actual mutations and invokes "preloadLinkByElement"
  */
-const preloadLinkByMutation = (mutations, selector, eventOnly = false) =>
+const preloadLinkByMutation = (mutations, eventOnly = false) => {
   mutations
     .reduce(
-      (nodes, mutation) => nodes.concat.apply(nodes, mutation.addedNodes),
-      []
-    )
-    .reduce(
-      (nodes, node) =>
+      (nodes, mutation) =>
         nodes.concat.apply(
           nodes,
-          (node.matches && node.matches(selector) && [node]) ||
-            (node.querySelectorAll && node.querySelectorAll(selector)) ||
-            []
+          [].filter.call(
+            mutation.addedNodes,
+            _node =>
+              _node.nodeName === "LINK" &&
+              _node.hasAttribute("rel") &&
+              (_node.getAttribute("rel") === "preload" ||
+                _node.getAttribute("rel") === "nomodule")
+          )
         ),
       []
     )
     .sort(prioritize)
     .forEach(element => preloadLinkByElement(element, eventOnly));
+};
 
 /**
  * do the background fetching for a [rel="preload"]
@@ -76,11 +78,11 @@ export const observeMutations = (
   // preload link[rel="preload"] by mutation
   if (window.MutationObserver) {
     new MutationObserver(mutations =>
-      preloadLinkByMutation(mutations, selector, eventOnly)
+      preloadLinkByMutation(mutations, eventOnly)
     ).observe(document.documentElement, {
       childList: true,
-      subtree: false,
-      attributeFilter: ["rel"]
+      subtree: true,
+      attributes: false
     });
   } else {
     const searchInterval = setInterval(() => {
