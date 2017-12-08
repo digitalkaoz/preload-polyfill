@@ -80,16 +80,19 @@ export const skipNonMatchingModules = element => {
 };
 
 export const getPreloads = selector => {
-  const resources = [];
-  return toArray(document.querySelectorAll(selector)).filter(v => {
-    if (resources.indexOf(v.href) === -1) {
-      resources.push(v.href);
-      return true;
-    }
-    return false;
-  });
-};
+  const preloads = document.querySelectorAll(selector);
 
-const toArray = nodeList => {
-  return Array.prototype.slice.call(nodeList);
+  let uniquePreloads = [],
+    seenUrls = [];
+
+  for (let i = 0, len = preloads.length; i < len; ++i) {
+    let preload = preloads[i];
+
+    if (seenUrls.indexOf(preload.href) === -1) {
+      seenUrls.push(preload.href);
+      uniquePreloads.push(preload);
+    }
+  }
+
+  return uniquePreloads;
 };

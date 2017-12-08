@@ -3,46 +3,25 @@ import { getPreloads, skipNonMatchingModules } from "./dom";
 const processed = [];
 
 /**
- * sort like the preload scanner would do it (font > css > js > rest)
- */
-const prioritize = (a, b) => {
-  const aNumeric =
-    a.getAttribute("as") === "font" || a.hasAttribute("critical")
-      ? 0
-      : a.getAttribute("as") === "style" ? 1 : 2;
-  const bNumeric =
-    b.getAttribute("as") === "font" || b.hasAttribute("critical")
-      ? 0
-      : b.getAttribute("as") === "style" ? 1 : 2;
-
-  if (aNumeric < bNumeric) return -1;
-  if (aNumeric > bNumeric) return 1;
-
-  return 0;
-};
-
-/**
  * filters all [rel="preload"] from actual mutations and invokes "preloadLinkByElement"
  */
 const preloadLinkByMutation = (mutations, eventOnly = false) => {
-  mutations
-    .reduce(
-      (nodes, mutation) =>
-        nodes.concat.apply(
-          nodes,
-          [].filter.call(
-            mutation.addedNodes,
-            _node =>
-              _node.nodeName === "LINK" &&
-              _node.hasAttribute("rel") &&
-              (_node.getAttribute("rel") === "preload" ||
-                _node.getAttribute("rel") === "nomodule")
-          )
-        ),
-      []
-    )
-    .sort(prioritize)
-    .forEach(element => preloadLinkByElement(element, eventOnly));
+  for (let i = 0, len = mutations.length; i < len; i++) {
+    let addedNodes = mutations[i].addedNodes;
+
+    for (let j = 0, len = addedNodes.length; j < len; j++) {
+      let element = addedNodes[j];
+
+      if (
+        element.nodeName === "LINK" &&
+        element.hasAttribute("rel") &&
+        (element.getAttribute("rel") === "preload" ||
+          element.getAttribute("rel") === "nomodule")
+      ) {
+        preloadLinkByElement(element, eventOnly);
+      }
+    }
+  }
 };
 
 /**
@@ -102,9 +81,13 @@ export const scanPreloads = (
   eventOnly = false
 ) => {
   // preload link[rel="preload"] by selector
-  getPreloads(selector)
-    .sort(prioritize)
-    .forEach(element => preloadLinkByElement(element, eventOnly));
+  const preloads = getPreloads(selector);
+
+  let link;
+
+  while ((link = preloads.shift()) !== undefined) {
+    preloadLinkByElement(link, eventOnly);
+  }
 };
 
 export const polyfill = selector => {
