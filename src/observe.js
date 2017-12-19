@@ -1,11 +1,11 @@
-import { load, onload } from "./loaders";
+import { load } from "./loaders";
 import { getPreloads, skipNonMatchingModules } from "./dom";
 const processed = [];
 
 /**
  * filters all [rel="preload"] from actual mutations and invokes "preloadLinkByElement"
  */
-const preloadLinkByMutation = (mutations, eventOnly = false) => {
+const preloadLinkByMutation = mutations => {
   for (let i = 0, len = mutations.length; i < len; i++) {
     let addedNodes = mutations[i].addedNodes;
 
@@ -18,7 +18,7 @@ const preloadLinkByMutation = (mutations, eventOnly = false) => {
         (element.getAttribute("rel") === "preload" ||
           element.getAttribute("rel") === "nomodule")
       ) {
-        preloadLinkByElement(element, eventOnly);
+        preloadLinkByElement(element);
       }
     }
   }
@@ -27,7 +27,7 @@ const preloadLinkByMutation = (mutations, eventOnly = false) => {
 /**
  * do the background fetching for a [rel="preload"]
  */
-const preloadLinkByElement = (element, eventOnly = false) => {
+const preloadLinkByElement = element => {
   if (processed.indexOf(element.href) !== -1) {
     return;
   }
@@ -38,36 +38,30 @@ const preloadLinkByElement = (element, eventOnly = false) => {
 
   console.log(`loading "${element.href}"`);
 
-  if (eventOnly) {
-    element.onload = () => onload(null, element, eventOnly);
-    //element.addEventListener("load", event => onload(event, element, eventOnly));
-  } else {
-    load(element);
-  }
+  load(element);
+
   processed.push(element.href);
 };
 
 /**
  * watch for preload elements to come after loading this script
  */
-export const observeMutations = (
-  selector = 'link[rel="preload"]',
-  eventOnly = false
-) => {
+const observeMutations = (selector = 'link[rel="preload"]') => {
   // preload link[rel="preload"] by mutation
   if (window.MutationObserver) {
-    new MutationObserver(mutations =>
-      preloadLinkByMutation(mutations, eventOnly)
-    ).observe(document.documentElement, {
-      childList: true,
-      subtree: true,
-      attributes: false
-    });
+    new MutationObserver(mutations => preloadLinkByMutation(mutations)).observe(
+      document.documentElement,
+      {
+        childList: true,
+        subtree: true,
+        attributes: false
+      }
+    );
   } else {
     const searchInterval = setInterval(() => {
       if (document.readyState == "complete") {
         clearInterval(searchInterval);
-        scanPreloads(selector, eventOnly);
+        scanPreloads(selector);
       }
     }, 20);
   }
@@ -76,17 +70,14 @@ export const observeMutations = (
 /**
  * scan and preload resources
  */
-export const scanPreloads = (
-  selector = 'link[rel="preload"]',
-  eventOnly = false
-) => {
+export const scanPreloads = (selector = 'link[rel="preload"]') => {
   // preload link[rel="preload"] by selector
   const preloads = getPreloads(selector);
 
   let link;
 
   while ((link = preloads.shift()) !== undefined) {
-    preloadLinkByElement(link, eventOnly);
+    preloadLinkByElement(link);
   }
 };
 

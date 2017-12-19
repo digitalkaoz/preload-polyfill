@@ -7,19 +7,19 @@
     
     <body>
             <!-- deduplication -->
-        <link rel="preload" as="script" href="foo.js" />
-        <link rel="preload" as="script" href="foo.js" />
+        <link rel="preload" as="script" href="foo.js" onload="this.setAttribute('preloaded', true)" />
+        <link rel="preload" as="script" href="foo.js" onload="this.setAttribute('preloaded', true)" />
         <!-- js -->
-        <link rel="preload" as="script" href="bar.js" />
+        <link rel="preload" as="script" href="bar.js" onload="this.setAttribute('preloaded', true)" />
 
         <!-- imgage -->
-        <link rel="preload" as="image" href="img_fjords.jpg" />
+        <link rel="preload" as="image" href="img_fjords.jpg" onload="this.setAttribute('preloaded', true)" />
         <img id="img" style="width:100%"/>
 
         <!-- style -->
-        <link rel="preload" as="style" href="foo.css"/>
-        <link rel="preload" as="document" href="."/>
-        <link rel="preload" as="fetch" href="."/>
+        <link rel="preload" as="style" href="foo.css" onload="this.setAttribute('preloaded', true);this.setAttribute('rel','stylesheet');this.setAttribute('media','all')"/>
+        <link rel="preload" as="document" href="." onload="this.setAttribute('preloaded', true)"/>
+        <link rel="preload" as="fetch" href="." onload="this.setAttribute('preloaded', true)"/>
         
         <!-- webfont -->
 
@@ -27,7 +27,7 @@
         <h1>webfont</h1>
         
         <!-- module/nomodule -->
-        <link rel="preload" critical as="script" module href="module.js" />
-        <link rel="nomodule" critical as="script" href="nomodule.js" />
+        <link rel="preload" critical as="script" module href="module.js" onload="this.setAttribute('preloaded', true)" />
+        <link rel="nomodule" critical as="script" href="nomodule.js" onload="this.setAttribute('preloaded', true)" />
     </body>
 </html>

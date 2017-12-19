@@ -9,7 +9,7 @@ const setLoaded = element => {
 /**
  * called when a preload is loaded
  */
-export const onload = (event, element, eventOnly = false) => {
+const onload = (event, element) => {
   //immediate invoke css
   if (element.getAttribute("as") === "style") {
     processCss(element);
@@ -20,9 +20,7 @@ export const onload = (event, element, eventOnly = false) => {
 
   setLoaded(element);
 
-  if (!eventOnly) {
-    element.dispatchEvent(new CustomEvent("load", event));
-  }
+  element.dispatchEvent(new CustomEvent("load", event));
 };
 
 const loadWithFetch = element => {
@@ -63,7 +61,7 @@ const loadImage = element => {
 };
 
 const loadStyle = element => {
-  element.addEventListener("load", event => onload(event, element, true));
+  element.addEventListener("load", event => onload(event, element));
 
   element.media = "none";
   element.type = "text/css";

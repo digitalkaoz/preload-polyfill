@@ -1,4 +1,4 @@
-import { polyfill, observeMutations } from "./observe";
+import { polyfill } from "./observe";
 import { invokePreloads } from "./invoke";
 
 /**
@@ -9,7 +9,6 @@ const preloadPolyfill = () => {
     if (!document.createElement("link").relList.supports("preload")) {
       throw Error;
     }
-    observeMutations('link[rel="preload"]', true);
   } catch (error) {
     console.warn("invoking preload-polyfill");
     polyfill('link[rel="preload"],link[rel="nomodule"]');
