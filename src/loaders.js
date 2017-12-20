@@ -3,6 +3,7 @@ import { processCss, skipNonMatchingModules } from "./dom";
 const setLoaded = element => {
   element.setAttribute("preloaded", true);
   element.removeEventListener("load", onload);
+  element.onload = null;
   console.log(`preloaded "${element.href}"`);
 };
 
