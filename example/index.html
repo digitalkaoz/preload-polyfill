@@ -1,33 +1,56 @@
 <!DOCTYPE html>
 <html>
     <head>
-            <link rel="preload" name="Raleway" as="font" type="font/woff2" crossorigin href="font.woff2"/>
-            <script src="/dist/preload-polyfill.dev.js"></script>
-    </head>
-    
-    <body>
-            <!-- deduplication -->
-        <link rel="preload" as="script" href="foo.js" onload="this.setAttribute('preloaded', true)" />
-        <link rel="preload" as="script" href="foo.js" onload="this.setAttribute('preloaded', true)" />
-        <!-- js -->
-        <link rel="preload" as="script" href="bar.js" onload="this.setAttribute('preloaded', true)" />
+        <link rel="preload" name="Raleway" as="font" type="font/woff2" crossorigin href="font.woff2"/>
+        <script>
+            window.invokePreload = window.invokePreload || {};
 
-        <!-- imgage -->
-        <link rel="preload" as="image" href="img_fjords.jpg" onload="this.setAttribute('preloaded', true)" />
+            invokePreload.onLoad = function(link) {
+                link.setAttribute("preloaded", "true");
+                link.removeAttribute("onload");
+            };
+
+            invokePreload.onScriptLoad = function(link, error) {
+                link.setAttribute("preloaded", !!error ? "error" : "true");
+                link.removeAttribute("onload");
+                link.removeAttribute("onerror");
+            };
+
+            invokePreload.onScriptError = function(link) {
+                invokePreload.onScriptLoad(link, true);
+            };
+
+            invokePreload.onStyleLoad = function(link) {
+                link.setAttribute("rel", "stylesheet");
+                link.setAttribute("media", "all");
+                link.removeAttribute("onload");
+            };
+        </script>
+        <script src="/dist/preload-polyfill.dev.js"></script>
+    </head>
+
+    <body>
+        <!-- deduplication -->
+        <link rel="preload" as="script" href="foo.js" onload="invokePreload.onScriptLoad(this)" onerror="invokePreload.onScriptError(this)" />
+        <link rel="preload" as="script" href="foo.js" onload="invokePreload.onScriptLoad(this)" onerror="invokePreload.onScriptError(this)" />
+        <!-- js -->
+        <link rel="preload" as="script" href="baz.js" onload="invokePreload.onScriptLoad(this)" onerror="invokePreload.onScriptError(this)" />
+        <link rel="preload" as="script" href="bar.js" onload="invokePreload.onScriptLoad(this)" onerror="invokePreload.onScriptError(this)" />
+
+        <!-- image -->
+        <link rel="preload" as="image" href="img_fjords.jpg" onload="invokePreload.onLoad(this)" />
         <img id="img" style="width:100%"/>
 
         <!-- style -->
-        <link rel="preload" as="style" href="foo.css" onload="this.setAttribute('preloaded', true);this.setAttribute('rel','stylesheet');this.setAttribute('media','all')"/>
-        <link rel="preload" as="document" href="." onload="this.setAttribute('preloaded', true)"/>
-        <link rel="preload" as="fetch" href="." onload="this.setAttribute('preloaded', true)"/>
+        <link rel="preload" as="style" href="foo.css" onload="invokePreload.onStyleLoad(this)"/>
+        <link rel="preload" as="document" href="." onload="invokePreload.onLoad(this)"/>
+        <link rel="preload" as="fetch" href="." onload="invokePreload.onLoad(this)"/>
         
         <!-- webfont -->
-
-        
         <h1>webfont</h1>
         
         <!-- module/nomodule -->
-        <link rel="preload" critical as="script" module href="module.js" onload="this.setAttribute('preloaded', true)" />
-        <link rel="nomodule" critical as="script" href="nomodule.js" onload="this.setAttribute('preloaded', true)" />
+        <link rel="preload" critical as="script" module href="module.js" onload="invokePreload.onScriptLoad(this)" onerror="invokePreload.onScriptError(this)" />
+        <link rel="nomodule" critical as="script" href="nomodule.js" onload="invokePreload.onScriptLoad(this)" onerror="invokePreload.onScriptError(this)" />
     </body>
 </html>

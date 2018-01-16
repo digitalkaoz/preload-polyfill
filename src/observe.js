@@ -49,21 +49,23 @@ const preloadLinkByElement = element => {
 const observeMutations = (selector = 'link[rel="preload"]') => {
   // preload link[rel="preload"] by mutation
   if (window.MutationObserver) {
-    new MutationObserver(mutations => preloadLinkByMutation(mutations)).observe(
-      document.documentElement,
-      {
-        childList: true,
-        subtree: true,
-        attributes: false
-      }
-    );
+    let observer = new MutationObserver(mutations =>
+      preloadLinkByMutation(mutations)
+    ).observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      observer.disconnect();
+    });
   } else {
     const searchInterval = setInterval(() => {
       if (document.readyState == "complete") {
         clearInterval(searchInterval);
         scanPreloads(selector);
       }
-    }, 20);
+    }, 50);
   }
 };
 

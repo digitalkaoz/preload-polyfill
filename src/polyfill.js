@@ -11,7 +11,7 @@ const preloadPolyfill = () => {
     }
   } catch (error) {
     console.warn("invoking preload-polyfill");
-    polyfill('link[rel="preload"],link[rel="nomodule"]');
+    polyfill('link[rel="preload"]');
   }
 
   document.addEventListener("DOMContentLoaded", invokePreloads);

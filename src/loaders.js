@@ -1,16 +1,20 @@
 import { processCss, skipNonMatchingModules } from "./dom";
 
-const setLoaded = element => {
-  element.setAttribute("preloaded", true);
-  element.removeEventListener("load", onload);
+const setLoaded = (element, error = false) => {
+  element.setAttribute("preloaded", error ? "error" : true);
+  element.removeEventListener("load", onLoad);
   element.onload = null;
-  console.log(`preloaded "${element.href}"`);
+  console.log(
+    `${error ? "error when preloading" : "successfully preloaded"} "${
+      element.href
+    }"`
+  );
 };
 
 /**
  * called when a preload is loaded
  */
-const onload = (event, element) => {
+const onLoad = (event, element) => {
   //immediate invoke css
   if (element.getAttribute("as") === "style") {
     processCss(element);
@@ -24,6 +28,10 @@ const onload = (event, element) => {
   element.dispatchEvent(new CustomEvent("load", event));
 };
 
+const onError = (event, element) => {
+  setLoaded(element, true);
+};
+
 const loadWithFetch = element => {
   const options = {
     method: "GET",
@@ -32,8 +40,14 @@ const loadWithFetch = element => {
   };
 
   fetch(element.href, options)
-    .then(() => onload(null, element))
-    .catch(() => onload(null, element));
+    .then(response => {
+      if (response.ok) {
+        onLoad(null, element);
+      } else {
+        onError(null, element);
+      }
+    })
+    .catch(response => onError(null, element));
 };
 
 /**
@@ -46,23 +60,28 @@ const loadWithXhr = element => {
 
   const request = new XMLHttpRequest();
 
-  request.addEventListener("load", event => onload(event, element));
+  request.addEventListener("load", event => {
+    if (request.status >= 200 && request.status < 300) {
+      onLoad(event, element);
+    } else {
+      onError(event, element);
+    }
+  });
   request.open("GET", element.href, true);
-  request.setRequestHeader(
-    "Accept",
-    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-  );
   request.send();
 };
 
 const loadImage = element => {
   const img = new Image();
-  img.onload = event => onload(event, element);
+
+  img.onload = event => onLoad(event, element);
+  img.onerror = () => onError(event, element);
   img.src = element.href;
 };
 
 const loadStyle = element => {
-  element.addEventListener("load", event => onload(event, element));
+  element.onload = event => onLoad(event, element);
+  element.onerror = () => onError(event, element);
 
   element.media = "none";
   element.type = "text/css";
@@ -94,10 +113,6 @@ const loadFont = element => {
 };
 
 const loadScript = element => {
-  if (skipNonMatchingModules(element)) {
-    return;
-  }
-
   if (element.getAttribute("rel") === "nomodule") {
     element.setAttribute("rel", "preload");
   }

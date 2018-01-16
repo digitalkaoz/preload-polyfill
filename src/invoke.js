@@ -1,13 +1,29 @@
 import { processScript, getPreloads, skipNonMatchingModules } from "./dom";
 
 const processLink = link => {
-  processScript(link);
-  console.log(`processed preload "${link.href}"`);
+  if (link.getAttribute("preloaded") === "true") {
+    processScript(link);
+    console.log(`processed preload "${link.href}"`);
+  } else {
+    console.log(`no processing for preload "${link.href}"`);
+  }
 };
 
-const invokeLinkResources = preloads => {
+const invokeCriticalLinkResources = preloads => {
   while (preloads.length > 0 && preloads[0].hasAttribute("preloaded")) {
     processLink(preloads.shift());
+  }
+};
+
+const invokeNonCriticalLinkResources = preloads => {
+  for (let i = 0, len = preloads.length; i < len; ++i) {
+    const preload = preloads[i];
+
+    if (preload.hasAttribute("preloaded")) {
+      processLink(preloads.splice(i, 1)[0]);
+      len--;
+      i--;
+    }
   }
 };
 
@@ -18,9 +34,7 @@ export const invokePreloads = () => {
 
   let interval;
 
-  const preloads = getPreloads(
-    "link[rel='nomodule'],link[rel='preload'][as='script'],link[rel='preload'][as='worker']"
-  );
+  const preloads = getPreloads("link[rel='preload'][as='script']");
 
   let preload,
     criticals = [],
@@ -44,13 +58,11 @@ export const invokePreloads = () => {
     );
 
     // first comes the criticals
-    if (criticals) {
-      invokeLinkResources(criticals);
-    }
-
-    // all other resources
-    if (criticals.length === 0) {
-      invokeLinkResources(noncriticals);
+    if (criticals.length > 0) {
+      invokeCriticalLinkResources(criticals);
+    } else {
+      // all other resources
+      invokeNonCriticalLinkResources(noncriticals);
     }
 
     // if all resources are processed, remove interval, otherwise check again in X ms

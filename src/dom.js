@@ -7,7 +7,6 @@ export const processScript = link => {
 
   const script = document.createElement("script");
 
-  script.async = false;
   script.setAttribute("src", link.href);
   link.insertAdjacentElement("afterend", script);
   processed.push(link.href);
