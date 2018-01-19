@@ -1,42 +1,22 @@
-const processed = [];
-
 export const processScript = link => {
-  if (processed.indexOf(link.href) !== -1) {
-    return;
-  }
-
   const script = document.createElement("script");
 
   script.setAttribute("src", link.href);
   link.insertAdjacentElement("afterend", script);
-  processed.push(link.href);
 
   return script;
 };
 
-const convertToStylesheet = link => {
-  if (processed.indexOf(link.href) !== -1) {
-    return;
-  }
-
-  if (link.hasAttribute("as")) {
-    if (link.getAttribute("rel") === "preload") {
-      link.setAttribute("rel", "stylesheet");
-      link.setAttribute("type", "text/css");
-    }
-
-    link.removeAttribute("as");
-    link.setAttribute("media", "all");
-
-    processed.push(link.href);
-  }
+const activateStylesheet = link => {
+  link.removeAttribute("as");
+  link.setAttribute("media", "all");
 };
 
 export const processCss = link => {
   if (window.requestAnimationFrame) {
-    window.requestAnimationFrame(() => convertToStylesheet(link));
+    window.requestAnimationFrame(() => activateStylesheet(link));
   } else {
-    convertToStylesheet(link);
+    activateStylesheet(link);
   }
 
   return link;

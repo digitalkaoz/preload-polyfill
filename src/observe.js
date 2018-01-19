@@ -57,7 +57,9 @@ const observeMutations = (selector = 'link[rel="preload"]') => {
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-      observer.disconnect();
+      if (observer) {
+        observer.disconnect();
+      }
     });
   } else {
     const searchInterval = setInterval(() => {

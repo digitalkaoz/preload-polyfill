@@ -21,8 +21,14 @@
             };
 
             invokePreload.onStyleLoad = function(link) {
-                link.setAttribute("rel", "stylesheet");
-                link.setAttribute("media", "all");
+                if (!document.styleSheets.item(link.href)) {
+                    link.setAttribute("rel", "stylesheet");
+                    link.setAttribute("type", "text/css");
+                    link.setAttribute("media", "all");
+                    link.setAttribute("preloaded", "true");
+                    link.removeAttribute("as");
+                }
+
                 link.removeAttribute("onload");
             };
         </script>
@@ -42,6 +48,7 @@
         <img id="img" style="width:100%"/>
 
         <!-- style -->
+        <link rel="preload" as="style" href="foo.css" onload="invokePreload.onStyleLoad(this)"/>
         <link rel="preload" as="style" href="foo.css" onload="invokePreload.onStyleLoad(this)"/>
         <link rel="preload" as="document" href="." onload="invokePreload.onLoad(this)"/>
         <link rel="preload" as="fetch" href="." onload="invokePreload.onLoad(this)"/>

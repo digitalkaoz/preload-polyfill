@@ -3,6 +3,7 @@ import { processCss, skipNonMatchingModules } from "./dom";
 const setLoaded = (element, error = false) => {
   element.setAttribute("preloaded", error ? "error" : true);
   element.removeEventListener("load", onLoad);
+  element.removeAttribute("onload");
   element.onload = null;
   console.log(
     `${error ? "error when preloading" : "successfully preloaded"} "${
@@ -17,8 +18,8 @@ const setLoaded = (element, error = false) => {
 const onLoad = (event, element) => {
   //immediate invoke css
   if (element.getAttribute("as") === "style") {
-    processCss(element);
     setLoaded(element);
+    processCss(element);
 
     return;
   }
