@@ -1,8 +1,8 @@
 import { processScript, getPreloads, skipNonMatchingModules } from "./dom";
 
-const processLink = link => {
+const processLink = (link, isAsync = true) => {
   if (link.getAttribute("preloaded") === "true") {
-    processScript(link);
+    processScript(link, isAsync);
     console.log(`processed preload "${link.href}"`);
   } else {
     console.log(`no processing for preload "${link.href}"`);
@@ -11,7 +11,7 @@ const processLink = link => {
 
 const invokeCriticalLinkResources = preloads => {
   while (preloads.length > 0 && preloads[0].hasAttribute("preloaded")) {
-    processLink(preloads.shift());
+    processLink(preloads.shift(), false);
   }
 };
 

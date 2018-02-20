@@ -1,7 +1,8 @@
-export const processScript = link => {
+export const processScript = (link, isAsync = true) => {
   const script = document.createElement("script");
 
   script.setAttribute("src", link.href);
+  script.async = isAsync;
   link.insertAdjacentElement("afterend", script);
 
   return script;
