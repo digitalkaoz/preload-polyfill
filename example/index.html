@@ -21,7 +21,9 @@
             };
 
             invokePreload.onStyleLoad = function(link) {
-                if (!document.styleSheets.item(link.href)) {
+                if ([].map.call(document.styleSheets, function(stylesheet) {
+                    return stylesheet.href;
+                }).indexOf(link.href) === -1) {
                     link.setAttribute("rel", "stylesheet");
                     link.setAttribute("type", "text/css");
                     link.setAttribute("media", "all");
