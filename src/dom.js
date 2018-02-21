@@ -1,4 +1,4 @@
-export const processScript = (link, isAsync = true) => {
+export const processScript = (link, isAsync) => {
   const script = document.createElement("script");
 
   script.setAttribute("src", link.href);

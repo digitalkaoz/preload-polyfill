@@ -1,6 +1,8 @@
 import { processScript, getPreloads, skipNonMatchingModules } from "./dom";
 
-const processLink = (link, isAsync = true) => {
+const setNonCriticalAsync = true;
+
+const processLink = (link, isAsync) => {
   if (link.getAttribute("preloaded") === "true") {
     processScript(link, isAsync);
     console.log(`processed preload "${link.href}"`);
@@ -20,7 +22,7 @@ const invokeNonCriticalLinkResources = preloads => {
     const preload = preloads[i];
 
     if (preload.hasAttribute("preloaded")) {
-      processLink(preloads.splice(i, 1)[0]);
+      processLink(preloads.splice(i, 1)[0], setNonCriticalAsync);
       len--;
       i--;
     }
@@ -49,6 +51,8 @@ export const invokePreloads = () => {
       }
     }
   }
+
+  setNonCriticalAsync = criticals.length === 0;
 
   const processLinks = () => {
     console.log(
