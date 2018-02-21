@@ -1,6 +1,6 @@
 import { processScript, getPreloads, skipNonMatchingModules } from "./dom";
 
-const setNonCriticalAsync = true;
+let setNonCriticalAsync = true;
 
 const processLink = (link, isAsync) => {
   if (link.getAttribute("preloaded") === "true") {
