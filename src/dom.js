@@ -3,6 +3,11 @@ export const processScript = (link, isAsync) => {
 
   script.setAttribute("src", link.href);
   script.async = isAsync;
+
+  if (link.integrity) {
+    script.integrity = link.integrity;
+  }
+
   link.insertAdjacentElement("afterend", script);
 
   return script;
