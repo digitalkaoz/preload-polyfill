@@ -8,7 +8,11 @@ export const processScript = (link, isAsync) => {
     script.integrity = link.integrity;
   }
 
-  link.insertAdjacentElement("afterend", script);
+  if (link.insertAdjacentElement) {
+    link.insertAdjacentElement("afterend", script);
+  } else {
+    link.parentNode.appendChild(script);
+  }
 
   return script;
 };
