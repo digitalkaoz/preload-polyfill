@@ -1,4 +1,4 @@
-import { processCss, skipNonMatchingModules } from "./dom";
+import { processCss } from "./dom";
 
 const setLoaded = (element, error = false) => {
   element.setAttribute("preloaded", error ? "error" : true);
@@ -48,7 +48,7 @@ const loadWithFetch = element => {
         onError(null, element);
       }
     })
-    .catch(response => onError(null, element));
+    .catch(() => onError(null, element));
 };
 
 /**
@@ -76,13 +76,13 @@ const loadImage = element => {
   const img = new Image();
 
   img.onload = event => onLoad(event, element);
-  img.onerror = () => onError(event, element);
+  img.onerror = event => onError(event, element);
   img.src = element.href;
 };
 
 const loadStyle = element => {
   element.onload = event => onLoad(event, element);
-  element.onerror = () => onError(event, element);
+  element.onerror = event => onError(event, element);
 
   element.media = "none";
   element.type = "text/css";
@@ -110,7 +110,7 @@ const loadFont = element => {
       document.fonts.add(loadedFace);
       onload(null, element);
     })
-    .catch(e => console.error);
+    .catch(console.error);
 };
 
 const loadScript = element => {
