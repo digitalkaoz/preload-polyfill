@@ -37,14 +37,14 @@ This Polyfill supports the following types:
 - [x] css
 - [x] font
 - [x] image
-- [] audio (not well tested)
-- [] document (not well tested)
-- [] embed (not well tested)
-- [] fetch (not well tested)
-- [] object (not well tested)
-- [] track (not well tested)
-- [] worker (not well tested)
-- [] video (not well tested)
+- [ ] audio (not well tested)
+- [ ] document (not well tested)
+- [ ] embed (not well tested)
+- [ ] fetch (not well tested)
+- [ ] object (not well tested)
+- [ ] track (not well tested)
+- [ ] worker (not well tested)
+- [ ] video (not well tested)
 
 https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
 
