@@ -23,6 +23,12 @@ TODOS:
 - [ ] tests 
 - [ ] media support (https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content#Including_media)
 
+## Install with npm
+
+```
+npm install @digitalkaoz/preload-polyfill
+```
+
 ## Usage
 
 This Polyfill supports the following types:
