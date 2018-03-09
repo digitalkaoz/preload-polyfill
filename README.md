@@ -72,7 +72,7 @@ those resources will be fetched non blocking, but executed first in order they a
 to preload fonts correctly you have to set a name property on the links
 
 ```html
-<link rel="preload" name="FontName" as="font" crossorigin type="font/woff2" href="font.woff2" />
+<link rel="preload" name="FontName" weight="bold" as="font" crossorigin type="font/woff2" href="font.woff2" />
 ```
 
 **module**

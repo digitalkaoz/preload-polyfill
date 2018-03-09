@@ -102,7 +102,12 @@ const loadFont = element => {
     return loadWithXhr(element);
   }
 
-  var f = new FontFace(element.getAttribute("name"), `url(${element.href})`);
+  var f = new FontFace(
+    element.getAttribute("name"), 
+    `url(${element.href})`,
+    {
+      weight: element.getAttribute("weight") || "normal"
+    });
 
   f
     .load(element.href)
