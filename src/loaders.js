@@ -113,7 +113,7 @@ const loadFont = element => {
     .load(element.href)
     .then(loadedFace => {
       document.fonts.add(loadedFace);
-      onload(null, element);
+      onLoad(null, element);
     })
     .catch(console.error);
 };
