@@ -2,6 +2,7 @@
 <html>
     <head>
         <link rel="preload" name="Raleway" as="font" type="font/woff2" crossorigin href="font.woff2"/>
+        <link rel="preload" name="Raleway" weight="700" as="font" type="font/woff2" crossorigin href="other-font.woff2"/>
         <script>
             window.invokePreload = window.invokePreload || {};
 
@@ -54,9 +55,10 @@
         <link rel="preload" as="style" href="foo.css" onload="invokePreload.onStyleLoad(this)"/>
         <link rel="preload" as="document" href="." onload="invokePreload.onLoad(this)"/>
         <link rel="preload" as="fetch" href="." onload="invokePreload.onLoad(this)"/>
-        
+
         <!-- webfont -->
-        <h1>webfont</h1>
+        <h1 style="font-weight: normal">webfont</h1>
+        <h1 style="font-weight: bold;">fancy webfont</h1>
         
         <!-- module/nomodule -->
         <link rel="preload" critical as="script" module href="module.js" onload="invokePreload.onScriptLoad(this)" onerror="invokePreload.onScriptError(this)" />

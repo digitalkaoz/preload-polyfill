@@ -106,7 +106,8 @@ const loadFont = element => {
     element.getAttribute("name"), 
     `url(${element.href})`,
     {
-      weight: element.getAttribute("weight") || "normal"
+        weight: element.getAttribute("weight") || "normal",
+        style: 'normal'
     });
 
   f
