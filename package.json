@@ -11,7 +11,8 @@
     "build:prod": "BABEL_ENV=production rollup -c",
     "build:staging": "BABEL_ENV=staging rollup -c",
     "build": "npm run cs && npm run build:dev && npm run build:prod && npm run build:staging",
-    "server": "simplehttp2server & open https://localhost:5000/example/"
+    "server": "simplehttp2server & open https://localhost:5000/example/",
+    "prepublish": "npm run build"
   },
   "author": "Robert Schönthal <robert.schoenthal@gmail.com>",
   "contributors": [
