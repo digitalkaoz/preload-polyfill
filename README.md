@@ -15,14 +15,6 @@ some good reads:
 * https://www.smashingmagazine.com/2016/02/preload-what-is-it-good-for/
 * https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
 
-TODOS:
------
-
-- [ ] With "disable-cache" the requests will be made twice
-- [ ] include simplehttp2server for `npm run dev`
-- [ ] tests 
-- [ ] media support (https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content#Including_media)
-
 ## Install with npm
 
 ```
@@ -47,6 +39,23 @@ This Polyfill supports the following types:
 - [ ] video (not well tested)
 
 https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content
+
+**Integration in your Page**
+
+> the `polyfill` and the `invoke` script are seperated
+
+```html
+    <script src="/dist/preload-polyfill.min.js"></script>
+    <script src="/dist/preload-polyfill-invoke.min.js"></script>
+```
+
+additionally you need an inline script (for browsers that are preload capable, preloading stuff could be faster than loading an external sync script, and you would miss the `load` event)
+
+```html
+    <script>/dist/preload-polyfill-inline.min.js</script>
+```
+
+**Preloading Stuff**
 
 simply use it as follows:
 
@@ -91,16 +100,24 @@ those resources will only be fetched if browser cant understand es6
 <link rel="nomodule" as="script" href="app.legacy.js" />
 ```
 
+**AllScriptsExecuted Event**
+
+`window.onload` can be fired even if not all preloaded scripts are executed, therefore we dispatch an event `AllScriptsExecuted` which indicates all preloaded stuff is executed too.
 
 ## Development
 
 ```
-$ npm i
-$ npm run dev &
-$ simplehttp2server
+$ npm start
 ```
 
 now visit https://localhost:5000
+
+## TODOS
+
+- [ ] With "disable-cache" the requests will be made twice
+- [ ] tests
+- [ ] make the execution of the preloaded scripts delay `window.onload` so we can get rid of the custom Event (already works in Chrome)
+- [ ] media support (https://developer.mozilla.org/en-US/docs/Web/HTML/Preloading_content#Including_media)
 
 ## Thanks
 

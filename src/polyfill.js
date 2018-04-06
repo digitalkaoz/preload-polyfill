@@ -1,5 +1,4 @@
 import { polyfill } from "./observe";
-import { invokePreloads } from "./invoke";
 
 /**
  * entrypoint, also binds DOMContentLoaded to the invocation of preloaded scripts
@@ -13,8 +12,6 @@ const preloadPolyfill = () => {
     console.warn("invoking preload-polyfill");
     polyfill('link[rel="preload"]');
   }
-
-  document.addEventListener("DOMContentLoaded", invokePreloads);
 };
 
 export default preloadPolyfill();

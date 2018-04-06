@@ -1,8 +1,10 @@
-export const processScript = (link, isAsync) => {
+export const processScript = (link, isAsync, resolve) => {
   const script = document.createElement("script");
 
-  script.setAttribute("src", link.href);
   script.async = isAsync;
+  script.onload = resolve;
+  script.onerror = resolve;
+  script.setAttribute("src", link.href);
 
   if (link.integrity) {
     script.integrity = link.integrity;

@@ -4,38 +4,45 @@
         <link rel="preload" name="Raleway" as="font" type="font/woff2" crossorigin href="font.woff2"/>
         <link rel="preload" name="Raleway" weight="700" as="font" type="font/woff2" crossorigin href="other-font.woff2"/>
         <script>
-            window.invokePreload = window.invokePreload || {};
+            (function () {
+  'use strict';
 
-            invokePreload.onLoad = function(link) {
-                link.setAttribute("preloaded", "true");
-                link.removeAttribute("onload");
-            };
+  window.invokePreload = window.invokePreload || {};
 
-            invokePreload.onScriptLoad = function(link, error) {
-                link.setAttribute("preloaded", !!error ? "error" : "true");
-                link.removeAttribute("onload");
-                link.removeAttribute("onerror");
-            };
+  invokePreload.onLoad = function (link) {
+    link.setAttribute("preloaded", "true");
+    link.removeAttribute("onload");
+  };
 
-            invokePreload.onScriptError = function(link) {
-                invokePreload.onScriptLoad(link, true);
-            };
+  invokePreload.onScriptLoad = function (link, error) {
+    link.setAttribute("preloaded", !!error ? "error" : "true");
+    link.removeAttribute("onload");
+    link.removeAttribute("onerror");
+  };
 
-            invokePreload.onStyleLoad = function(link) {
-                if ([].map.call(document.styleSheets, function(stylesheet) {
-                    return stylesheet.href;
-                }).indexOf(link.href) === -1) {
-                    link.setAttribute("rel", "stylesheet");
-                    link.setAttribute("type", "text/css");
-                    link.setAttribute("media", "all");
-                    link.setAttribute("preloaded", "true");
-                    link.removeAttribute("as");
-                }
+  invokePreload.onScriptError = function (link) {
+    invokePreload.onScriptLoad(link, true);
+  };
 
-                link.removeAttribute("onload");
-            };
+  invokePreload.onStyleLoad = function (link) {
+    if ([].map.call(document.styleSheets, function (stylesheet) {
+      return stylesheet.href;
+    }).indexOf(link.href) === -1) {
+      link.setAttribute("rel", "stylesheet");
+      link.setAttribute("type", "text/css");
+      link.setAttribute("media", "all");
+      link.setAttribute("preloaded", "true");
+      link.removeAttribute("as");
+    }
+
+    link.removeAttribute("onload");
+  };
+
+}());
+
         </script>
         <script src="/dist/preload-polyfill.dev.js"></script>
+        <script src="/dist/preload-polyfill-invoke.dev.js"></script>
     </head>
 
     <body>

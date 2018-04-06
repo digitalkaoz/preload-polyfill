@@ -2,39 +2,48 @@ import { processScript, getPreloads, skipNonMatchingModules } from "./dom";
 
 let setNonCriticalAsync = true;
 
-const processLink = (link, isAsync) => {
+const processLink = (link, isAsync, resolve) => {
   if (link.getAttribute("preloaded") === "true") {
-    processScript(link, isAsync);
-    console.log(`processed preload "${link.href}"`);
+    processScript(link, isAsync, resolve);
   } else {
-    console.log(`no processing for preload "${link.href}"`);
+    setTimeout(() => {
+      processLink(link, isAsync, resolve);
+    }, 10);
   }
 };
 
 const invokeCriticalLinkResources = preloads => {
-  while (preloads.length > 0 && preloads[0].hasAttribute("preloaded")) {
-    processLink(preloads.shift(), false);
+  const promises = [];
+
+  while (preloads.length) {
+    promises.push(
+      new Promise(resolve => {
+        processLink(preloads.shift(), false, resolve);
+      })
+    );
   }
+
+  return Promise.all(promises);
 };
 
 const invokeNonCriticalLinkResources = preloads => {
-  for (let i = 0, len = preloads.length; i < len; ++i) {
-    const preload = preloads[i];
+  const promises = [];
 
-    if (preload.hasAttribute("preloaded")) {
-      processLink(preloads.splice(i, 1)[0], setNonCriticalAsync);
-      len--;
-      i--;
-    }
+  while (preloads.length) {
+    promises.push(
+      new Promise(resolve => {
+        processLink(preloads.shift(), setNonCriticalAsync, resolve);
+      })
+    );
   }
+
+  return Promise.all(promises);
 };
 
-export const invokePreloads = () => {
+const invokePreloads = () => {
   if (performance.now) {
     console.log(performance.now());
   }
-
-  let interval;
 
   const preloads = getPreloads("link[rel='preload'][as='script']");
 
@@ -54,44 +63,18 @@ export const invokePreloads = () => {
 
   setNonCriticalAsync = criticals.length === 0;
 
-  const processLinks = () => {
-    console.log(
-      "check for invokable preload invocations",
-      criticals,
-      noncriticals
-    );
+  console.log(
+    "check for invokable preload invocations",
+    criticals,
+    noncriticals
+  );
 
-    // first comes the criticals
-    if (criticals.length > 0) {
-      invokeCriticalLinkResources(criticals);
-    } else {
-      // all other resources
-      invokeNonCriticalLinkResources(noncriticals);
-    }
-
-    // if all resources are processed, remove interval, otherwise check again in X ms
-    if (criticals.length === 0 && noncriticals.length === 0) {
-      clearInterval(interval);
-      console.log("invoked all preloads");
-      if (performance.now) {
-        console.log(performance.now());
-      }
-    }
-  };
-
-  // check every X ms if all preloaded resources are fetched
-  interval = setInterval(processLinks, 50);
-
-  // kill the listening 10s after window.load
-  window.addEventListener("load", () => {
-    setTimeout(() => {
-      if (interval) {
-        clearInterval(interval);
-
-        if (criticals.length || noncriticals.length) {
-          console.error("could not invoke all preloads!");
-        }
-      }
-    }, 10000);
-  });
+  // first comes the criticals
+  invokeCriticalLinkResources(criticals)
+    .then(() => invokeNonCriticalLinkResources(noncriticals))
+    .then(() => {
+      document.dispatchEvent(new CustomEvent("AllScriptsExecuted"));
+    });
 };
+
+document.addEventListener("DOMContentLoaded", invokePreloads);
