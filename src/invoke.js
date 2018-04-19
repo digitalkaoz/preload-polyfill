@@ -41,7 +41,7 @@ const invokeNonCriticalLinkResources = preloads => {
 };
 
 const invokePreloads = () => {
-  if (performance.now) {
+  if (performance && performance.now) {
     console.log(performance.now());
   }
 
