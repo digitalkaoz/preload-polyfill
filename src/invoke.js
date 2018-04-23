@@ -40,11 +40,13 @@ const invokeNonCriticalLinkResources = preloads => {
   return Promise.all(promises);
 };
 
-const invokePreloads = () => {
-  if (performance && performance.now) {
-    console.log(performance.now());
+const perfLog = () => {
+  if (window.performance && window.performance.now) {
+    console.log(window.performance.now());
   }
-
+};
+const invokePreloads = () => {
+  perfLog();
   const preloads = getPreloads("link[rel='preload'][as='script']");
 
   let preload,
@@ -74,6 +76,7 @@ const invokePreloads = () => {
     .then(() => invokeNonCriticalLinkResources(noncriticals))
     .then(() => {
       document.dispatchEvent(new CustomEvent("AllScriptsExecuted"));
+      perfLog();
     });
 };
 
