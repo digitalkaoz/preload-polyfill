@@ -96,9 +96,6 @@ const loadFont = element => {
 
   //TODO adding ttf ... to fontfaceset
   if (!element.hasAttribute("name")) {
-    console.warn(
-      "Webfonts can only be preloaded through FontFace if you set a 'name=FontName' property on the link"
-    );
     return loadWithXhr(element);
   }
 
