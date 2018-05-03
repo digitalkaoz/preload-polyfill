@@ -9,6 +9,7 @@ const preloadPolyfill = () => {
       throw Error;
     }
   } catch (error) {
+    console.warn("invoking preload-polyfill");
     polyfill('link[rel="preload"]');
   }
 };
