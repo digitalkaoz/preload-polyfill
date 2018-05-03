@@ -1,6 +1,6 @@
 {
   "name": "@digitalkaoz/preload-polyfill",
-  "version": "1.20.4",
+  "version": "1.20.6",
   "description": "polyfilling [link rel=preload]",
   "main": "dist/preload-polyfill.js",
   "scripts": {

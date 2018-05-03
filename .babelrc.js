@@ -11,12 +11,12 @@ module.exports = {
   "env": {
     "production": {
       "plugins" : [
-        ["babel-plugin-transform-remove-console", { "exclude": [ "error", "warn"] }]
+        ["babel-plugin-transform-remove-console"]
       ]
     },
     "staging": {
       "plugins" : [
-        ["babel-plugin-transform-remove-console", { "exclude": [ "error", "warn"] }]
+        ["babel-plugin-transform-remove-console"]
       ]
     }
   }
