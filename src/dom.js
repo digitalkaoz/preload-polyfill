@@ -10,6 +10,12 @@ export const processScript = (link, isAsync, resolve) => {
     script.integrity = link.integrity;
   }
 
+  // if the preload resource has a crossorigin attribute, the generated script should have one aswell, otherwise we get a different resource
+  // see https://bugs.chromium.org/p/chromium/issues/detail?id=678429
+  if (link.hasAttribute("crossorigin")) {
+    script.setAttribute("crossorigin", link.getAttribute("crossorigin"));
+  }
+
   if (link.insertAdjacentElement) {
     link.insertAdjacentElement("afterend", script);
   } else {
