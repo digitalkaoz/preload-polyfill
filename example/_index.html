@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- ie9 polyfills -->
+        <script src="https://www.promisejs.org/polyfills/promise-6.1.0.js"></script>
+        <script>
+        (function() {
+          if (typeof window.CustomEvent === "function") return false; //If not IE
+
+          function CustomEvent(event, params) {
+            params = params || { bubbles: false, cancelable: false, detail: undefined };
+            var evt = document.createEvent("CustomEvent");
+            evt.initCustomEvent(
+              event,
+              params.bubbles,
+              params.cancelable,
+              params.detail
+            );
+            return evt;
+          }
+
+          CustomEvent.prototype = window.Event.prototype;
+
+          window.CustomEvent = CustomEvent;
+        })();
+        </script>
+
         <link rel="preload" name="Raleway" as="font" type="font/woff2" crossorigin href="font.woff2"/>
         <link rel="preload" name="Raleway" weight="700" as="font" type="font/woff2" crossorigin href="other-font.woff2"/>
         <script>
