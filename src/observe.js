@@ -6,6 +6,7 @@ const processed = [];
  * filters all [rel="preload"] from actual mutations and invokes "preloadLinkByElement"
  */
 const preloadLinkByMutation = mutations => {
+  console.log("mutation");
   for (let i = 0, len = mutations.length; i < len; i++) {
     let addedNodes = mutations[i].addedNodes;
 

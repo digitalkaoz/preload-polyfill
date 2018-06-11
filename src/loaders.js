@@ -1,16 +1,4 @@
-import { processCss } from "./dom";
-
-const setLoaded = (element, error = false) => {
-  element.setAttribute("preloaded", error ? "error" : true);
-  element.removeEventListener("load", onLoad);
-  element.removeAttribute("onload");
-  element.onload = null;
-  console.log(
-    `${error ? "error when preloading" : "successfully preloaded"} "${
-      element.href
-    }"`
-  );
-};
+import { setLoaded, processCss } from "./dom";
 
 /**
  * called when a preload is loaded
