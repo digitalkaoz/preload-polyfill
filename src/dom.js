@@ -26,16 +26,42 @@ export const processScript = (link, isAsync, resolve) => {
 };
 
 const activateStylesheet = link => {
-  link.removeAttribute("as");
+  link.setAttribute("rel", "stylesheet");
+  link.setAttribute("type", "text/css");
   link.setAttribute("media", "all");
+  link.setAttribute("preloaded", "true");
+  link.removeAttribute("as");
+};
+
+export const setLoaded = (element, error = false) => {
+  element.setAttribute("preloaded", !!error ? "error" : "true");
+  element.removeEventListener("load", window.invokePreload.onLoad);
+  element.removeAttribute("onload");
+  element.removeAttribute("onerror");
+  element.onload = null;
+  console.log(
+    `${error ? "error when preloading" : "successfully preloaded"} "${
+      element.href
+    }"`
+  );
 };
 
 export const processCss = link => {
-  if (window.requestAnimationFrame) {
-    window.requestAnimationFrame(() => activateStylesheet(link));
-  } else {
-    activateStylesheet(link);
+  if (
+    [].map
+      .call(document.styleSheets, function(stylesheet) {
+        return stylesheet.media.mediaText !== "none" ? stylesheet.href : null;
+      })
+      .indexOf(link.href) === -1
+  ) {
+    if (window.requestAnimationFrame) {
+      window.requestAnimationFrame(() => activateStylesheet(link));
+    } else {
+      activateStylesheet(link);
+    }
   }
+
+  link.removeAttribute("onload");
 
   return link;
 };
@@ -76,8 +102,8 @@ export const skipNonMatchingModules = element => {
   return false;
 };
 
-export const getPreloads = selector => {
-  const preloads = document.querySelectorAll(selector);
+export const getPreloads = (selector, element = document) => {
+  const preloads = element.querySelectorAll(selector);
 
   let uniquePreloads = [],
     seenUrls = [];

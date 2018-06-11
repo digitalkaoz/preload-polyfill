@@ -1,4 +1,9 @@
-import { processScript, getPreloads, skipNonMatchingModules } from "./dom";
+import {
+  processScript,
+  getPreloads,
+  skipNonMatchingModules,
+  processCss
+} from "./dom";
 
 let setNonCriticalAsync = true;
 
@@ -81,3 +86,20 @@ const invokePreloads = () => {
 };
 
 document.addEventListener("DOMContentLoaded", invokePreloads);
+
+export default element => {
+  let preload;
+  const preloads = getPreloads("link[rel='preload']", element);
+
+  while ((preload = preloads.shift()) !== undefined) {
+    if (preload.getAttribute("as") === "script") {
+      if (!skipNonMatchingModules(preload)) {
+        processScript(preload);
+      }
+    } else if (preload.getAttribute("as") === "style") {
+      processCss(preload);
+    } else {
+      console.error("unprocessable preload found", preload);
+    }
+  }
+};

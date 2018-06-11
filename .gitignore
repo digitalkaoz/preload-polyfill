@@ -10,3 +10,4 @@
 # https://github.com/GoogleChromeLabs/simplehttp2server
 *.pem
 /example/index.html
+.history
