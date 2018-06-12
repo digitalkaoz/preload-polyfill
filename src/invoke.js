@@ -94,7 +94,7 @@ export default element => {
   while ((preload = preloads.shift()) !== undefined) {
     if (preload.getAttribute("as") === "script") {
       if (!skipNonMatchingModules(preload)) {
-        processScript(preload);
+        processScript(preload, false);
       }
     } else if (preload.getAttribute("as") === "style") {
       processCss(preload);
