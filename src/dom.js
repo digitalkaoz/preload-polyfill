@@ -50,7 +50,7 @@ export const processCss = link => {
   if (
     [].map
       .call(document.styleSheets, function(stylesheet) {
-        return stylesheet.media.mediaText !== "none" ? stylesheet.href : null;
+        return stylesheet.media.mediaText === "all" ? stylesheet.href : null;
       })
       .indexOf(link.href) === -1
   ) {
