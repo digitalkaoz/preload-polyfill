@@ -59,5 +59,11 @@
         <!-- module/nomodule -->
         <link rel="preload" critical as="script" module href="module.js" onload="invokePreload.onScriptLoad(this)" onerror="invokePreload.onScriptError(this)" />
         <link rel="nomodule" critical as="script" href="nomodule.js" onload="invokePreload.onScriptLoad(this)" onerror="invokePreload.onScriptError(this)" />
-    </body>
+
+        <script>
+          document.addEventListener("AllScriptsExecuted", function() {
+            console.log("all preloads executed");
+          })
+        </script>
+      </body>
 </html>
