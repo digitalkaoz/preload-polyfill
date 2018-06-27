@@ -10,8 +10,8 @@ let setNonCriticalAsync = true;
 const processLink = (link, isAsync, resolve) => {
   if (link.getAttribute("preloaded") === "true") {
     processScript(link, isAsync, resolve);
-    } else if (link.getAttribute("preloaded") === "error") {
-      resolve();
+  } else if (link.getAttribute("preloaded") === "error") {
+    resolve();
   } else {
     setTimeout(() => {
       processLink(link, isAsync, resolve);

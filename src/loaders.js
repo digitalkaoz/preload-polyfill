@@ -1,5 +1,7 @@
 import { setLoaded, processCss } from "./dom";
 
+const TIMEOUT = 3000;
+
 /**
  * called when a preload is loaded
  */
@@ -21,6 +23,12 @@ const onError = (event, element) => {
   setLoaded(element, true);
 };
 
+const timeoutPromise = (ms, promise) =>
+  new Promise((resolve, reject) => {
+    setTimeout(() => reject(new Error("timeout")), ms);
+    promise.then(resolve, reject);
+  });
+
 const loadWithFetch = element => {
   const options = {
     method: "GET",
@@ -28,7 +36,7 @@ const loadWithFetch = element => {
     cache: "force-cache"
   };
 
-  fetch(element.href, options)
+  timeoutPromise(TIMEOUT, fetch(element.href, options))
     .then(response => {
       if (response.ok) {
         onLoad(null, element);
@@ -56,7 +64,9 @@ const loadWithXhr = element => {
       onError(event, element);
     }
   });
+
   request.open("GET", element.href, true);
+  request.timeout = TIMEOUT;
   request.send();
 };
 
